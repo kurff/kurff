@@ -24,8 +24,14 @@ class Box: public cv::Rect{
 
         }
 
-        Box(const Box& box){
+        
 
+        Box(const Box& box){
+            x = box.x;
+            y = box.y;
+            height = box.height;
+            width = box.width;
+            
         }
     protected:
         vector<Top> top_pred_;

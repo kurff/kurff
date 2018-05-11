@@ -51,10 +51,10 @@ namespace kurff{
             float angle_up_;
             float scale_low_;
             float scale_up_;
-
-
     };
     CAFFE_REGISTER_CLASS(SimulationRegistry, Affine, Affine);
+
+
 
     class Prospective : public Simulation{
         public:
@@ -100,6 +100,49 @@ namespace kurff{
 
     };
     CAFFE_REGISTER_CLASS(SimulationRegistry, Noise, Noise);
+
+    class SubSample: public Simulation{
+        public:
+            SubSample(Parameters* parameters) : Simulation(parameters){
+
+            }
+            ~SubSample(){
+
+            }
+
+            void run(const Mat& input, Mat& output){
+                float r = this->random_->NextDouble()/2.0f + 0.5f;
+                Mat t;
+                cv::resize(input, t, cv::Size(input.cols* r, input.rows*r));
+                cv::resize(t, output, cv::Size(input.cols, input.rows));
+            }
+        protected:
+
+    };
+    CAFFE_REGISTER_CLASS(SimulationRegistry, SubSample, SubSample);
+
+
+    // gamma changes
+    class Illumination: public Simulation{
+        public:
+            Illumination(Parameters* parameters) : Simulation(parameters){
+
+            }
+            ~Illumination(){
+
+            }
+            void run(const Mat& input, Mat& output){
+                //cv::illuminationChange
+            }
+            
+        protected:
+            
+
+
+    };
+
+    CAFFE_REGISTER_CLASS(SimulationRegistry, Illumination, Illumination);
+
     class Background: public Simulation{
         public:
             Background(Parameters* parameters):Simulation(parameters){
@@ -108,7 +151,12 @@ namespace kurff{
             ~Background(){
 
             }
+            void run(const Mat& input, Mat& output){
+                
+            }
+
         protected:
+            vector<string> background_name_;
 
 
     };

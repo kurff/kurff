@@ -10,6 +10,10 @@
 #include "opencv2/opencv.hpp"
 using namespace cv;
 using namespace std;
+
+
+// only generate image
+
 namespace kurff{
     class Fonts{
         public:
@@ -20,9 +24,7 @@ namespace kurff{
             ~Fonts(){
                 FT_Done_Face    ( face_ );
                 FT_Done_FreeType( library_ );
-
             }
-
 
             void draw_bitmap( FT_Bitmap* bitmap, FT_Int x, FT_Int y){
                 FT_Int  i, j, p, q;
@@ -56,28 +58,19 @@ namespace kurff{
                 height_/2 - y_m );
                 //std::cout<< "bitmap_left: " << slot_->bitmap_left <<"bitmap_right: "<< slot_->bitmap_top;
             }
-
-            
-
-
             Mat& get(){
                 return img_;
             }
-        protected:
-            
+        protected:     
             FT_Library    library_;
             FT_Face       face_;
-
             FT_GlyphSlot  slot_;
             FT_Matrix     matrix_;                 /* transformation matrix */
             FT_Vector     pen_;                    /* untransformed origin  */
             FT_Error      error_;
-
-
             Mat img_ ;
             int height_;
             int width_;
-
 };
 
 

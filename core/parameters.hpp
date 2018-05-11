@@ -28,9 +28,14 @@ void read_from_text(string file, Parameters* parameters){
     FileInputStream* input = new FileInputStream(fd);
     bool success = google::protobuf::TextFormat::Parse(input, (Message*)(parameters));
     delete input;
-    LOG(INFO)<<"max_depth "<< parameters->depth();
-
     close(fd);
+    LOG(INFO)<< "mean lower: "<<parameters->mean().lower();
+    LOG(INFO)<< "mean upper: "<<parameters->mean().upper();
+    LOG(INFO)<< "transform size: "<< parameters->transform_size();
+    for(int i = 0; i < parameters->transform_size(); ++ i){
+        LOG(INFO)<<"transform: "<< parameters->transform(i);
+    }
+
 }
 
 static Parameters* global_parameters(){

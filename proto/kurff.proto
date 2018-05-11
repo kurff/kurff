@@ -17,6 +17,7 @@ message Parameters{
     required bounder angle = 3;
     required bounder scale = 4;
     required bounder gamma = 5;
+    repeated string transform = 6;
 
 
 

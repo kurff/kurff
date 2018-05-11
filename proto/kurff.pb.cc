@@ -7,6 +7,7 @@
 
 #include <google/protobuf/stubs/common.h>
 #include <google/protobuf/stubs/port.h>
+#include <google/protobuf/stubs/once.h>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/wire_format_lite_inl.h>
 #include <google/protobuf/descriptor.h>
@@ -18,10 +19,6 @@
 #include "third_party/protobuf/version.h"
 #endif
 // @@protoc_insertion_point(includes)
-
-namespace protobuf_kurff_2eproto {
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_kurff_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_bounder;
-}  // namespace protobuf_kurff_2eproto
 namespace kurff {
 class bounderDefaultTypeInternal {
  public:
@@ -35,9 +32,14 @@ class ParametersDefaultTypeInternal {
 } _Parameters_default_instance_;
 }  // namespace kurff
 namespace protobuf_kurff_2eproto {
-static void InitDefaultsbounder() {
+void InitDefaultsbounderImpl() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
+#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
+#else
+  ::google::protobuf::internal::InitProtobufDefaults();
+#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
   {
     void* ptr = &::kurff::_bounder_default_instance_;
     new (ptr) ::kurff::bounder();
@@ -46,12 +48,20 @@ static void InitDefaultsbounder() {
   ::kurff::bounder::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<0> scc_info_bounder =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsbounder}, {}};
+void InitDefaultsbounder() {
+  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
+  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsbounderImpl);
+}
 
-static void InitDefaultsParameters() {
+void InitDefaultsParametersImpl() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
+#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
+#else
+  ::google::protobuf::internal::InitProtobufDefaults();
+#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  protobuf_kurff_2eproto::InitDefaultsbounder();
   {
     void* ptr = &::kurff::_Parameters_default_instance_;
     new (ptr) ::kurff::Parameters();
@@ -60,13 +70,9 @@ static void InitDefaultsParameters() {
   ::kurff::Parameters::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<1> scc_info_Parameters =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsParameters}, {
-      &protobuf_kurff_2eproto::scc_info_bounder.base,}};
-
-void InitDefaults() {
-  ::google::protobuf::internal::InitSCC(&scc_info_bounder.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_Parameters.base);
+void InitDefaultsParameters() {
+  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
+  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsParametersImpl);
 }
 
 ::google::protobuf::Metadata file_level_metadata[2];
@@ -91,15 +97,17 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::kurff::Parameters, angle_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::kurff::Parameters, scale_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::kurff::Parameters, gamma_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::kurff::Parameters, transform_),
   0,
   1,
   2,
   3,
   4,
+  ~0u,
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 7, sizeof(::kurff::bounder)},
-  { 9, 19, sizeof(::kurff::Parameters)},
+  { 9, 20, sizeof(::kurff::Parameters)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -109,14 +117,15 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
 
 void protobuf_AssignDescriptors() {
   AddDescriptors();
+  ::google::protobuf::MessageFactory* factory = NULL;
   AssignDescriptors(
-      "kurff.proto", schemas, file_default_instances, TableStruct::offsets,
+      "kurff.proto", schemas, file_default_instances, TableStruct::offsets, factory,
       file_level_metadata, NULL, NULL);
 }
 
 void protobuf_AssignDescriptorsOnce() {
-  static ::google::protobuf::internal::once_flag once;
-  ::google::protobuf::internal::call_once(once, protobuf_AssignDescriptors);
+  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
+  ::google::protobuf::GoogleOnceInit(&once, &protobuf_AssignDescriptors);
 }
 
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
@@ -129,21 +138,22 @@ void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\013kurff.proto\022\005kurff\"-\n\007bounder\022\020\n\005upper"
-      "\030\001 \002(\002:\0010\022\020\n\005lower\030\002 \002(\002:\0010\"\244\001\n\nParamete"
+      "\030\001 \002(\002:\0010\022\020\n\005lower\030\002 \002(\002:\0010\"\267\001\n\nParamete"
       "rs\022\034\n\004mean\030\001 \002(\0132\016.kurff.bounder\022\033\n\003std\030"
       "\002 \002(\0132\016.kurff.bounder\022\035\n\005angle\030\003 \002(\0132\016.k"
       "urff.bounder\022\035\n\005scale\030\004 \002(\0132\016.kurff.boun"
-      "der\022\035\n\005gamma\030\005 \002(\0132\016.kurff.bounder"
+      "der\022\035\n\005gamma\030\005 \002(\0132\016.kurff.bounder\022\021\n\ttr"
+      "ansform\030\006 \003(\t"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 234);
+      descriptor, 253);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "kurff.proto", &protobuf_RegisterTypes);
 }
 
 void AddDescriptors() {
-  static ::google::protobuf::internal::once_flag once;
-  ::google::protobuf::internal::call_once(once, AddDescriptorsImpl);
+  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
+  ::google::protobuf::GoogleOnceInit(&once, &AddDescriptorsImpl);
 }
 // Force AddDescriptors() to be called at dynamic initialization time.
 struct StaticDescriptorInitializer {
@@ -165,15 +175,17 @@ const int bounder::kLowerFieldNumber;
 
 bounder::bounder()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  ::google::protobuf::internal::InitSCC(
-      &protobuf_kurff_2eproto::scc_info_bounder.base);
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    ::protobuf_kurff_2eproto::InitDefaultsbounder();
+  }
   SharedCtor();
   // @@protoc_insertion_point(constructor:kurff.bounder)
 }
 bounder::bounder(const bounder& from)
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL),
-      _has_bits_(from._has_bits_) {
+      _has_bits_(from._has_bits_),
+      _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::memcpy(&upper_, &from.upper_,
     static_cast<size_t>(reinterpret_cast<char*>(&lower_) -
@@ -182,6 +194,7 @@ bounder::bounder(const bounder& from)
 }
 
 void bounder::SharedCtor() {
+  _cached_size_ = 0;
   ::memset(&upper_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&lower_) -
       reinterpret_cast<char*>(&upper_)) + sizeof(lower_));
@@ -196,7 +209,9 @@ void bounder::SharedDtor() {
 }
 
 void bounder::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
 const ::google::protobuf::Descriptor* bounder::descriptor() {
   ::protobuf_kurff_2eproto::protobuf_AssignDescriptorsOnce();
@@ -204,10 +219,17 @@ const ::google::protobuf::Descriptor* bounder::descriptor() {
 }
 
 const bounder& bounder::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_kurff_2eproto::scc_info_bounder.base);
+  ::protobuf_kurff_2eproto::InitDefaultsbounder();
   return *internal_default_instance();
 }
 
+bounder* bounder::New(::google::protobuf::Arena* arena) const {
+  bounder* n = new bounder;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
 
 void bounder::Clear() {
 // @@protoc_insertion_point(message_clear_start:kurff.bounder)
@@ -231,7 +253,7 @@ bool bounder::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:kurff.bounder)
   for (;;) {
-    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -369,7 +391,9 @@ size_t bounder::ByteSizeLong() const {
     total_size += RequiredFieldsByteSizeFallback();
   }
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
   return total_size;
 }
 
@@ -436,6 +460,7 @@ void bounder::InternalSwap(bounder* other) {
   swap(lower_, other->lower_);
   swap(_has_bits_[0], other->_has_bits_[0]);
   _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata bounder::GetMetadata() const {
@@ -464,19 +489,23 @@ const int Parameters::kStdFieldNumber;
 const int Parameters::kAngleFieldNumber;
 const int Parameters::kScaleFieldNumber;
 const int Parameters::kGammaFieldNumber;
+const int Parameters::kTransformFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Parameters::Parameters()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  ::google::protobuf::internal::InitSCC(
-      &protobuf_kurff_2eproto::scc_info_Parameters.base);
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    ::protobuf_kurff_2eproto::InitDefaultsParameters();
+  }
   SharedCtor();
   // @@protoc_insertion_point(constructor:kurff.Parameters)
 }
 Parameters::Parameters(const Parameters& from)
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL),
-      _has_bits_(from._has_bits_) {
+      _has_bits_(from._has_bits_),
+      _cached_size_(0),
+      transform_(from.transform_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.has_mean()) {
     mean_ = new ::kurff::bounder(*from.mean_);
@@ -507,6 +536,7 @@ Parameters::Parameters(const Parameters& from)
 }
 
 void Parameters::SharedCtor() {
+  _cached_size_ = 0;
   ::memset(&mean_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&gamma_) -
       reinterpret_cast<char*>(&mean_)) + sizeof(gamma_));
@@ -526,7 +556,9 @@ void Parameters::SharedDtor() {
 }
 
 void Parameters::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
 const ::google::protobuf::Descriptor* Parameters::descriptor() {
   ::protobuf_kurff_2eproto::protobuf_AssignDescriptorsOnce();
@@ -534,10 +566,17 @@ const ::google::protobuf::Descriptor* Parameters::descriptor() {
 }
 
 const Parameters& Parameters::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_kurff_2eproto::scc_info_Parameters.base);
+  ::protobuf_kurff_2eproto::InitDefaultsParameters();
   return *internal_default_instance();
 }
 
+Parameters* Parameters::New(::google::protobuf::Arena* arena) const {
+  Parameters* n = new Parameters;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
 
 void Parameters::Clear() {
 // @@protoc_insertion_point(message_clear_start:kurff.Parameters)
@@ -545,6 +584,7 @@ void Parameters::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  transform_.Clear();
   cached_has_bits = _has_bits_[0];
   if (cached_has_bits & 31u) {
     if (cached_has_bits & 0x00000001u) {
@@ -578,7 +618,7 @@ bool Parameters::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:kurff.Parameters)
   for (;;) {
-    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -642,6 +682,23 @@ bool Parameters::MergePartialFromCodedStream(
         break;
       }
 
+      // repeated string transform = 6;
+      case 6: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(50u /* 50 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->add_transform()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+            this->transform(this->transform_size() - 1).data(),
+            static_cast<int>(this->transform(this->transform_size() - 1).length()),
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "kurff.Parameters.transform");
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -672,31 +729,41 @@ void Parameters::SerializeWithCachedSizes(
   // required .kurff.bounder mean = 1;
   if (cached_has_bits & 0x00000001u) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, this->_internal_mean(), output);
+      1, *this->mean_, output);
   }
 
   // required .kurff.bounder std = 2;
   if (cached_has_bits & 0x00000002u) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, this->_internal_std(), output);
+      2, *this->std_, output);
   }
 
   // required .kurff.bounder angle = 3;
   if (cached_has_bits & 0x00000004u) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, this->_internal_angle(), output);
+      3, *this->angle_, output);
   }
 
   // required .kurff.bounder scale = 4;
   if (cached_has_bits & 0x00000008u) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      4, this->_internal_scale(), output);
+      4, *this->scale_, output);
   }
 
   // required .kurff.bounder gamma = 5;
   if (cached_has_bits & 0x00000010u) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      5, this->_internal_gamma(), output);
+      5, *this->gamma_, output);
+  }
+
+  // repeated string transform = 6;
+  for (int i = 0, n = this->transform_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->transform(i).data(), static_cast<int>(this->transform(i).length()),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "kurff.Parameters.transform");
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      6, this->transform(i), output);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -718,35 +785,45 @@ void Parameters::SerializeWithCachedSizes(
   if (cached_has_bits & 0x00000001u) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        1, this->_internal_mean(), deterministic, target);
+        1, *this->mean_, deterministic, target);
   }
 
   // required .kurff.bounder std = 2;
   if (cached_has_bits & 0x00000002u) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        2, this->_internal_std(), deterministic, target);
+        2, *this->std_, deterministic, target);
   }
 
   // required .kurff.bounder angle = 3;
   if (cached_has_bits & 0x00000004u) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        3, this->_internal_angle(), deterministic, target);
+        3, *this->angle_, deterministic, target);
   }
 
   // required .kurff.bounder scale = 4;
   if (cached_has_bits & 0x00000008u) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        4, this->_internal_scale(), deterministic, target);
+        4, *this->scale_, deterministic, target);
   }
 
   // required .kurff.bounder gamma = 5;
   if (cached_has_bits & 0x00000010u) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        5, this->_internal_gamma(), deterministic, target);
+        5, *this->gamma_, deterministic, target);
+  }
+
+  // repeated string transform = 6;
+  for (int i = 0, n = this->transform_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->transform(i).data(), static_cast<int>(this->transform(i).length()),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "kurff.Parameters.transform");
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteStringToArray(6, this->transform(i), target);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -765,35 +842,35 @@ size_t Parameters::RequiredFieldsByteSizeFallback() const {
     // required .kurff.bounder mean = 1;
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
-        *mean_);
+        *this->mean_);
   }
 
   if (has_std()) {
     // required .kurff.bounder std = 2;
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
-        *std_);
+        *this->std_);
   }
 
   if (has_angle()) {
     // required .kurff.bounder angle = 3;
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
-        *angle_);
+        *this->angle_);
   }
 
   if (has_scale()) {
     // required .kurff.bounder scale = 4;
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
-        *scale_);
+        *this->scale_);
   }
 
   if (has_gamma()) {
     // required .kurff.bounder gamma = 5;
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
-        *gamma_);
+        *this->gamma_);
   }
 
   return total_size;
@@ -811,33 +888,43 @@ size_t Parameters::ByteSizeLong() const {
     // required .kurff.bounder mean = 1;
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
-        *mean_);
+        *this->mean_);
 
     // required .kurff.bounder std = 2;
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
-        *std_);
+        *this->std_);
 
     // required .kurff.bounder angle = 3;
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
-        *angle_);
+        *this->angle_);
 
     // required .kurff.bounder scale = 4;
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
-        *scale_);
+        *this->scale_);
 
     // required .kurff.bounder gamma = 5;
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
-        *gamma_);
+        *this->gamma_);
 
   } else {
     total_size += RequiredFieldsByteSizeFallback();
   }
+  // repeated string transform = 6;
+  total_size += 1 *
+      ::google::protobuf::internal::FromIntSize(this->transform_size());
+  for (int i = 0, n = this->transform_size(); i < n; i++) {
+    total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
+      this->transform(i));
+  }
+
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
   return total_size;
 }
 
@@ -863,6 +950,7 @@ void Parameters::MergeFrom(const Parameters& from) {
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  transform_.MergeFrom(from.transform_);
   cached_has_bits = from._has_bits_[0];
   if (cached_has_bits & 31u) {
     if (cached_has_bits & 0x00000001u) {
@@ -923,6 +1011,7 @@ void Parameters::Swap(Parameters* other) {
 }
 void Parameters::InternalSwap(Parameters* other) {
   using std::swap;
+  transform_.InternalSwap(&other->transform_);
   swap(mean_, other->mean_);
   swap(std_, other->std_);
   swap(angle_, other->angle_);
@@ -930,6 +1019,7 @@ void Parameters::InternalSwap(Parameters* other) {
   swap(gamma_, other->gamma_);
   swap(_has_bits_[0], other->_has_bits_[0]);
   _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata Parameters::GetMetadata() const {
@@ -940,15 +1030,5 @@ void Parameters::InternalSwap(Parameters* other) {
 
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace kurff
-namespace google {
-namespace protobuf {
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::kurff::bounder* Arena::CreateMaybeMessage< ::kurff::bounder >(Arena* arena) {
-  return Arena::CreateInternal< ::kurff::bounder >(arena);
-}
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::kurff::Parameters* Arena::CreateMaybeMessage< ::kurff::Parameters >(Arena* arena) {
-  return Arena::CreateInternal< ::kurff::Parameters >(arena);
-}
-}  // namespace protobuf
-}  // namespace google
 
 // @@protoc_insertion_point(global_scope)

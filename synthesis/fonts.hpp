@@ -5,7 +5,7 @@
 #include <string.h>
 #include <math.h>
 #include <iostream>
-#include <ft2build.h>
+#include "ft2build.h"
 #include FT_FREETYPE_H
 #include "opencv2/opencv.hpp"
 using namespace cv;

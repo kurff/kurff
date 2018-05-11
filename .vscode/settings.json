@@ -30,6 +30,7 @@
         "type_traits": "cpp",
         "typeinfo": "cpp",
         "utility": "cpp",
-        "array": "cpp"
+        "array": "cpp",
+        "vector": "cpp"
     }
 }

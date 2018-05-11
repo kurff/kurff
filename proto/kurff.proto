@@ -1,0 +1,25 @@
+syntax = "proto2";
+
+package kurff;
+
+//message 
+
+
+message bounder{
+    required float upper =1 [default = 0.0];
+    required float lower =2 [default = 0.0];
+} 
+
+
+message Parameters{
+    required bounder mean = 1;
+    required bounder std = 2;
+    required bounder angle = 3;
+    required bounder scale = 4;
+
+
+
+
+
+
+}

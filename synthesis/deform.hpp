@@ -42,8 +42,8 @@ namespace kurff{
                 float r =  this->random_->NextDouble();
                 float scale = scale_low_* r + (1-r)*scale_up_;
                 float angle = angle_low_* r + (1-r)*angle_up_;
-
-
+                
+                
             }
         protected:
             cv::Mat trans_;
@@ -126,17 +126,35 @@ namespace kurff{
     class Illumination: public Simulation{
         public:
             Illumination(Parameters* parameters) : Simulation(parameters){
+                gamma_lower_ = parameters->gamma().lower();
+                gamma_upper_ = parameters->gamma().upper();
+                lut_.reset(new uchar[256], std::default_delete<uchar [] >());
 
             }
             ~Illumination(){
 
             }
             void run(const Mat& input, Mat& output){
-                //cv::illuminationChange
+                float gamma = this->random_->NextDouble()/2.0f + 0.6f;
+                
+                for( int i = 0; i < 256; i++ ){  
+                    lut_.get()[i] = saturate_cast<uchar>(pow((float)(i/255.0), gamma) * 255.0f);
+                } 
+                output = cv::Mat::zeros(cv::Size(input.cols, input.rows), CV_8UC3);
+                for(int i = 0; i < input.rows; ++ i){
+                    for(int j = 0; j < input.cols; ++ j){
+                        Vec3b x = input.at<Vec3b>(i,j);
+                        output.at<Vec3b>(i,j).val[0] = lut_.get()[x.val[0]];
+                        output.at<Vec3b>(i,j).val[1] = lut_.get()[x.val[1]];
+                        output.at<Vec3b>(i,j).val[2] = lut_.get()[x.val[2]];
+                    }
+                }
             }
-            
+
         protected:
-            
+            float gamma_lower_;
+            float gamma_upper_;
+            std::shared_ptr<uchar> lut_;
 
 
     };

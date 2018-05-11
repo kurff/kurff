@@ -332,6 +332,18 @@ class Parameters : public ::google::protobuf::Message /* @@protoc_insertion_poin
   ::kurff::bounder* mutable_scale();
   void set_allocated_scale(::kurff::bounder* scale);
 
+  // required .kurff.bounder gamma = 5;
+  bool has_gamma() const;
+  void clear_gamma();
+  static const int kGammaFieldNumber = 5;
+  private:
+  const ::kurff::bounder& _internal_gamma() const;
+  public:
+  const ::kurff::bounder& gamma() const;
+  ::kurff::bounder* release_gamma();
+  ::kurff::bounder* mutable_gamma();
+  void set_allocated_gamma(::kurff::bounder* gamma);
+
   // @@protoc_insertion_point(class_scope:kurff.Parameters)
  private:
   void set_has_mean();
@@ -342,6 +354,8 @@ class Parameters : public ::google::protobuf::Message /* @@protoc_insertion_poin
   void clear_has_angle();
   void set_has_scale();
   void clear_has_scale();
+  void set_has_gamma();
+  void clear_has_gamma();
 
   // helper for ByteSizeLong()
   size_t RequiredFieldsByteSizeFallback() const;
@@ -353,6 +367,7 @@ class Parameters : public ::google::protobuf::Message /* @@protoc_insertion_poin
   ::kurff::bounder* std_;
   ::kurff::bounder* angle_;
   ::kurff::bounder* scale_;
+  ::kurff::bounder* gamma_;
   friend struct ::protobuf_kurff_2eproto::TableStruct;
 };
 // ===================================================================
@@ -648,6 +663,64 @@ inline void Parameters::set_allocated_scale(::kurff::bounder* scale) {
   }
   scale_ = scale;
   // @@protoc_insertion_point(field_set_allocated:kurff.Parameters.scale)
+}
+
+// required .kurff.bounder gamma = 5;
+inline bool Parameters::has_gamma() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void Parameters::set_has_gamma() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void Parameters::clear_has_gamma() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void Parameters::clear_gamma() {
+  if (gamma_ != NULL) gamma_->Clear();
+  clear_has_gamma();
+}
+inline const ::kurff::bounder& Parameters::_internal_gamma() const {
+  return *gamma_;
+}
+inline const ::kurff::bounder& Parameters::gamma() const {
+  const ::kurff::bounder* p = gamma_;
+  // @@protoc_insertion_point(field_get:kurff.Parameters.gamma)
+  return p != NULL ? *p : *reinterpret_cast<const ::kurff::bounder*>(
+      &::kurff::_bounder_default_instance_);
+}
+inline ::kurff::bounder* Parameters::release_gamma() {
+  // @@protoc_insertion_point(field_release:kurff.Parameters.gamma)
+  clear_has_gamma();
+  ::kurff::bounder* temp = gamma_;
+  gamma_ = NULL;
+  return temp;
+}
+inline ::kurff::bounder* Parameters::mutable_gamma() {
+  set_has_gamma();
+  if (gamma_ == NULL) {
+    auto* p = CreateMaybeMessage<::kurff::bounder>(GetArenaNoVirtual());
+    gamma_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:kurff.Parameters.gamma)
+  return gamma_;
+}
+inline void Parameters::set_allocated_gamma(::kurff::bounder* gamma) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == NULL) {
+    delete gamma_;
+  }
+  if (gamma) {
+    ::google::protobuf::Arena* submessage_arena = NULL;
+    if (message_arena != submessage_arena) {
+      gamma = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, gamma, submessage_arena);
+    }
+    set_has_gamma();
+  } else {
+    clear_has_gamma();
+  }
+  gamma_ = gamma;
+  // @@protoc_insertion_point(field_set_allocated:kurff.Parameters.gamma)
 }
 
 #ifdef __GNUC__

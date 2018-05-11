@@ -1,7 +1,8 @@
 #ifndef __KURFF_PROCESS_HPP__
 #define __KURFF_PROCESS_HPP__
-#include "utils/character.hpp"
 
+#include "opencv2/opencv.hpp"
+using namespace cv;
 namespace kurff{
 class Process{
     public:
@@ -12,22 +13,24 @@ class Process{
 
             
         }
-        virtual void run(Character& characters) = 0;
+        virtual void run(const cv::Mat & image) = 0;
 };
 
-class PruneProcess: public Process{
+class ConnectComponent: public Process{
     public:
-        PruneProcess(){
+        ConnectComponent(){
 
         }
-        ~PruneProcess(){
+        ~ConnectComponent(){
 
         }
-    private:
-        void run(Character& characters){
-            
+    
+        void run(const cv::Mat & image){
+                    
 
         }
+    protected:
+
 
 
 };

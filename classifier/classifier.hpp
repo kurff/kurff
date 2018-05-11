@@ -6,7 +6,7 @@ using namespace cv;
 #include <string>
 using namespace std;
 // recongize characters 
-
+#include "core/registry.h"
 namespace kurff{
     class Classifier{
         public:
@@ -25,6 +25,10 @@ namespace kurff{
          
 
     };
+
+    CAFFE_DECLARE_REGISTRY(ClassifierRegistry, Classifier);
+    CAFFE_DEFINE_REGISTRY(ClassifierRegistry, Classifier);
+
 
     class CNNClassifier : public Classifier{
         public:
@@ -50,6 +54,7 @@ namespace kurff{
 
     };
 
+    CAFFE_REGISTER_CLASS(ClassifierRegistry, CNNClassifier, CNNClassifier);
 
 
 

@@ -90,14 +90,16 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::kurff::Parameters, std_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::kurff::Parameters, angle_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::kurff::Parameters, scale_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::kurff::Parameters, gamma_),
   0,
   1,
   2,
   3,
+  4,
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 7, sizeof(::kurff::bounder)},
-  { 9, 18, sizeof(::kurff::Parameters)},
+  { 9, 19, sizeof(::kurff::Parameters)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -127,14 +129,14 @@ void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\013kurff.proto\022\005kurff\"-\n\007bounder\022\020\n\005upper"
-      "\030\001 \002(\002:\0010\022\020\n\005lower\030\002 \002(\002:\0010\"\205\001\n\nParamete"
+      "\030\001 \002(\002:\0010\022\020\n\005lower\030\002 \002(\002:\0010\"\244\001\n\nParamete"
       "rs\022\034\n\004mean\030\001 \002(\0132\016.kurff.bounder\022\033\n\003std\030"
       "\002 \002(\0132\016.kurff.bounder\022\035\n\005angle\030\003 \002(\0132\016.k"
       "urff.bounder\022\035\n\005scale\030\004 \002(\0132\016.kurff.boun"
-      "der"
+      "der\022\035\n\005gamma\030\005 \002(\0132\016.kurff.bounder"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 203);
+      descriptor, 234);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "kurff.proto", &protobuf_RegisterTypes);
 }
@@ -453,12 +455,15 @@ void Parameters::InitAsDefaultInstance() {
       ::kurff::bounder::internal_default_instance());
   ::kurff::_Parameters_default_instance_._instance.get_mutable()->scale_ = const_cast< ::kurff::bounder*>(
       ::kurff::bounder::internal_default_instance());
+  ::kurff::_Parameters_default_instance_._instance.get_mutable()->gamma_ = const_cast< ::kurff::bounder*>(
+      ::kurff::bounder::internal_default_instance());
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int Parameters::kMeanFieldNumber;
 const int Parameters::kStdFieldNumber;
 const int Parameters::kAngleFieldNumber;
 const int Parameters::kScaleFieldNumber;
+const int Parameters::kGammaFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Parameters::Parameters()
@@ -493,13 +498,18 @@ Parameters::Parameters(const Parameters& from)
   } else {
     scale_ = NULL;
   }
+  if (from.has_gamma()) {
+    gamma_ = new ::kurff::bounder(*from.gamma_);
+  } else {
+    gamma_ = NULL;
+  }
   // @@protoc_insertion_point(copy_constructor:kurff.Parameters)
 }
 
 void Parameters::SharedCtor() {
   ::memset(&mean_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&scale_) -
-      reinterpret_cast<char*>(&mean_)) + sizeof(scale_));
+      reinterpret_cast<char*>(&gamma_) -
+      reinterpret_cast<char*>(&mean_)) + sizeof(gamma_));
 }
 
 Parameters::~Parameters() {
@@ -512,6 +522,7 @@ void Parameters::SharedDtor() {
   if (this != internal_default_instance()) delete std_;
   if (this != internal_default_instance()) delete angle_;
   if (this != internal_default_instance()) delete scale_;
+  if (this != internal_default_instance()) delete gamma_;
 }
 
 void Parameters::SetCachedSize(int size) const {
@@ -535,7 +546,7 @@ void Parameters::Clear() {
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 15u) {
+  if (cached_has_bits & 31u) {
     if (cached_has_bits & 0x00000001u) {
       GOOGLE_DCHECK(mean_ != NULL);
       mean_->Clear();
@@ -551,6 +562,10 @@ void Parameters::Clear() {
     if (cached_has_bits & 0x00000008u) {
       GOOGLE_DCHECK(scale_ != NULL);
       scale_->Clear();
+    }
+    if (cached_has_bits & 0x00000010u) {
+      GOOGLE_DCHECK(gamma_ != NULL);
+      gamma_->Clear();
     }
   }
   _has_bits_.Clear();
@@ -615,6 +630,18 @@ bool Parameters::MergePartialFromCodedStream(
         break;
       }
 
+      // required .kurff.bounder gamma = 5;
+      case 5: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(42u /* 42 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_gamma()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -666,6 +693,12 @@ void Parameters::SerializeWithCachedSizes(
       4, this->_internal_scale(), output);
   }
 
+  // required .kurff.bounder gamma = 5;
+  if (cached_has_bits & 0x00000010u) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      5, this->_internal_gamma(), output);
+  }
+
   if (_internal_metadata_.have_unknown_fields()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         _internal_metadata_.unknown_fields(), output);
@@ -709,6 +742,13 @@ void Parameters::SerializeWithCachedSizes(
         4, this->_internal_scale(), deterministic, target);
   }
 
+  // required .kurff.bounder gamma = 5;
+  if (cached_has_bits & 0x00000010u) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        5, this->_internal_gamma(), deterministic, target);
+  }
+
   if (_internal_metadata_.have_unknown_fields()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields(), target);
@@ -749,6 +789,13 @@ size_t Parameters::RequiredFieldsByteSizeFallback() const {
         *scale_);
   }
 
+  if (has_gamma()) {
+    // required .kurff.bounder gamma = 5;
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSize(
+        *gamma_);
+  }
+
   return total_size;
 }
 size_t Parameters::ByteSizeLong() const {
@@ -760,7 +807,7 @@ size_t Parameters::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         _internal_metadata_.unknown_fields());
   }
-  if (((_has_bits_[0] & 0x0000000f) ^ 0x0000000f) == 0) {  // All required fields are present.
+  if (((_has_bits_[0] & 0x0000001f) ^ 0x0000001f) == 0) {  // All required fields are present.
     // required .kurff.bounder mean = 1;
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
@@ -780,6 +827,11 @@ size_t Parameters::ByteSizeLong() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
         *scale_);
+
+    // required .kurff.bounder gamma = 5;
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSize(
+        *gamma_);
 
   } else {
     total_size += RequiredFieldsByteSizeFallback();
@@ -812,7 +864,7 @@ void Parameters::MergeFrom(const Parameters& from) {
   (void) cached_has_bits;
 
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 15u) {
+  if (cached_has_bits & 31u) {
     if (cached_has_bits & 0x00000001u) {
       mutable_mean()->::kurff::bounder::MergeFrom(from.mean());
     }
@@ -824,6 +876,9 @@ void Parameters::MergeFrom(const Parameters& from) {
     }
     if (cached_has_bits & 0x00000008u) {
       mutable_scale()->::kurff::bounder::MergeFrom(from.scale());
+    }
+    if (cached_has_bits & 0x00000010u) {
+      mutable_gamma()->::kurff::bounder::MergeFrom(from.gamma());
     }
   }
 }
@@ -843,7 +898,7 @@ void Parameters::CopyFrom(const Parameters& from) {
 }
 
 bool Parameters::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000000f) != 0x0000000f) return false;
+  if ((_has_bits_[0] & 0x0000001f) != 0x0000001f) return false;
   if (has_mean()) {
     if (!this->mean_->IsInitialized()) return false;
   }
@@ -855,6 +910,9 @@ bool Parameters::IsInitialized() const {
   }
   if (has_scale()) {
     if (!this->scale_->IsInitialized()) return false;
+  }
+  if (has_gamma()) {
+    if (!this->gamma_->IsInitialized()) return false;
   }
   return true;
 }
@@ -869,6 +927,7 @@ void Parameters::InternalSwap(Parameters* other) {
   swap(std_, other->std_);
   swap(angle_, other->angle_);
   swap(scale_, other->scale_);
+  swap(gamma_, other->gamma_);
   swap(_has_bits_[0], other->_has_bits_[0]);
   _internal_metadata_.Swap(&other->_internal_metadata_);
 }

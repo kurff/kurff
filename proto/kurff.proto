@@ -16,7 +16,7 @@ message Parameters{
     required bounder std = 2;
     required bounder angle = 3;
     required bounder scale = 4;
-
+    required bounder gamma = 5;
 
 
 

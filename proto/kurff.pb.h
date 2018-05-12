@@ -297,6 +297,21 @@ class Parameters : public ::google::protobuf::Message /* @@protoc_insertion_poin
   const ::google::protobuf::RepeatedPtrField< ::std::string>& transform() const;
   ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_transform();
 
+  // required string background = 7;
+  bool has_background() const;
+  void clear_background();
+  static const int kBackgroundFieldNumber = 7;
+  const ::std::string& background() const;
+  void set_background(const ::std::string& value);
+  #if LANG_CXX11
+  void set_background(::std::string&& value);
+  #endif
+  void set_background(const char* value);
+  void set_background(const char* value, size_t size);
+  ::std::string* mutable_background();
+  ::std::string* release_background();
+  void set_allocated_background(::std::string* background);
+
   // required .kurff.bounder mean = 1;
   bool has_mean() const;
   void clear_mean();
@@ -342,6 +357,36 @@ class Parameters : public ::google::protobuf::Message /* @@protoc_insertion_poin
   ::kurff::bounder* mutable_gamma();
   void set_allocated_gamma(::kurff::bounder* gamma);
 
+  // required .kurff.bounder center = 11;
+  bool has_center() const;
+  void clear_center();
+  static const int kCenterFieldNumber = 11;
+  const ::kurff::bounder& center() const;
+  ::kurff::bounder* release_center();
+  ::kurff::bounder* mutable_center();
+  void set_allocated_center(::kurff::bounder* center);
+
+  // required int32 height = 8;
+  bool has_height() const;
+  void clear_height();
+  static const int kHeightFieldNumber = 8;
+  ::google::protobuf::int32 height() const;
+  void set_height(::google::protobuf::int32 value);
+
+  // required int32 width = 9;
+  bool has_width() const;
+  void clear_width();
+  static const int kWidthFieldNumber = 9;
+  ::google::protobuf::int32 width() const;
+  void set_width(::google::protobuf::int32 value);
+
+  // required bool rgb2gray = 10 [default = true];
+  bool has_rgb2gray() const;
+  void clear_rgb2gray();
+  static const int kRgb2GrayFieldNumber = 10;
+  bool rgb2gray() const;
+  void set_rgb2gray(bool value);
+
   // @@protoc_insertion_point(class_scope:kurff.Parameters)
  private:
   void set_has_mean();
@@ -354,6 +399,16 @@ class Parameters : public ::google::protobuf::Message /* @@protoc_insertion_poin
   void clear_has_scale();
   void set_has_gamma();
   void clear_has_gamma();
+  void set_has_background();
+  void clear_has_background();
+  void set_has_height();
+  void clear_has_height();
+  void set_has_width();
+  void clear_has_width();
+  void set_has_rgb2gray();
+  void clear_has_rgb2gray();
+  void set_has_center();
+  void clear_has_center();
 
   // helper for ByteSizeLong()
   size_t RequiredFieldsByteSizeFallback() const;
@@ -362,11 +417,16 @@ class Parameters : public ::google::protobuf::Message /* @@protoc_insertion_poin
   ::google::protobuf::internal::HasBits<1> _has_bits_;
   mutable int _cached_size_;
   ::google::protobuf::RepeatedPtrField< ::std::string> transform_;
+  ::google::protobuf::internal::ArenaStringPtr background_;
   ::kurff::bounder* mean_;
   ::kurff::bounder* std_;
   ::kurff::bounder* angle_;
   ::kurff::bounder* scale_;
   ::kurff::bounder* gamma_;
+  ::kurff::bounder* center_;
+  ::google::protobuf::int32 height_;
+  ::google::protobuf::int32 width_;
+  bool rgb2gray_;
   friend struct ::protobuf_kurff_2eproto::TableStruct;
   friend void ::protobuf_kurff_2eproto::InitDefaultsParametersImpl();
 };
@@ -435,13 +495,13 @@ inline void bounder::set_lower(float value) {
 
 // required .kurff.bounder mean = 1;
 inline bool Parameters::has_mean() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+  return (_has_bits_[0] & 0x00000002u) != 0;
 }
 inline void Parameters::set_has_mean() {
-  _has_bits_[0] |= 0x00000001u;
+  _has_bits_[0] |= 0x00000002u;
 }
 inline void Parameters::clear_has_mean() {
-  _has_bits_[0] &= ~0x00000001u;
+  _has_bits_[0] &= ~0x00000002u;
 }
 inline void Parameters::clear_mean() {
   if (mean_ != NULL) mean_->Clear();
@@ -489,13 +549,13 @@ inline void Parameters::set_allocated_mean(::kurff::bounder* mean) {
 
 // required .kurff.bounder std = 2;
 inline bool Parameters::has_std() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
+  return (_has_bits_[0] & 0x00000004u) != 0;
 }
 inline void Parameters::set_has_std() {
-  _has_bits_[0] |= 0x00000002u;
+  _has_bits_[0] |= 0x00000004u;
 }
 inline void Parameters::clear_has_std() {
-  _has_bits_[0] &= ~0x00000002u;
+  _has_bits_[0] &= ~0x00000004u;
 }
 inline void Parameters::clear_std() {
   if (std_ != NULL) std_->Clear();
@@ -543,13 +603,13 @@ inline void Parameters::set_allocated_std(::kurff::bounder* std) {
 
 // required .kurff.bounder angle = 3;
 inline bool Parameters::has_angle() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+  return (_has_bits_[0] & 0x00000008u) != 0;
 }
 inline void Parameters::set_has_angle() {
-  _has_bits_[0] |= 0x00000004u;
+  _has_bits_[0] |= 0x00000008u;
 }
 inline void Parameters::clear_has_angle() {
-  _has_bits_[0] &= ~0x00000004u;
+  _has_bits_[0] &= ~0x00000008u;
 }
 inline void Parameters::clear_angle() {
   if (angle_ != NULL) angle_->Clear();
@@ -597,13 +657,13 @@ inline void Parameters::set_allocated_angle(::kurff::bounder* angle) {
 
 // required .kurff.bounder scale = 4;
 inline bool Parameters::has_scale() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
+  return (_has_bits_[0] & 0x00000010u) != 0;
 }
 inline void Parameters::set_has_scale() {
-  _has_bits_[0] |= 0x00000008u;
+  _has_bits_[0] |= 0x00000010u;
 }
 inline void Parameters::clear_has_scale() {
-  _has_bits_[0] &= ~0x00000008u;
+  _has_bits_[0] &= ~0x00000010u;
 }
 inline void Parameters::clear_scale() {
   if (scale_ != NULL) scale_->Clear();
@@ -651,13 +711,13 @@ inline void Parameters::set_allocated_scale(::kurff::bounder* scale) {
 
 // required .kurff.bounder gamma = 5;
 inline bool Parameters::has_gamma() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
+  return (_has_bits_[0] & 0x00000020u) != 0;
 }
 inline void Parameters::set_has_gamma() {
-  _has_bits_[0] |= 0x00000010u;
+  _has_bits_[0] |= 0x00000020u;
 }
 inline void Parameters::clear_has_gamma() {
-  _has_bits_[0] &= ~0x00000010u;
+  _has_bits_[0] &= ~0x00000020u;
 }
 inline void Parameters::clear_gamma() {
   if (gamma_ != NULL) gamma_->Clear();
@@ -770,6 +830,195 @@ inline ::google::protobuf::RepeatedPtrField< ::std::string>*
 Parameters::mutable_transform() {
   // @@protoc_insertion_point(field_mutable_list:kurff.Parameters.transform)
   return &transform_;
+}
+
+// required string background = 7;
+inline bool Parameters::has_background() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void Parameters::set_has_background() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void Parameters::clear_has_background() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void Parameters::clear_background() {
+  background_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  clear_has_background();
+}
+inline const ::std::string& Parameters::background() const {
+  // @@protoc_insertion_point(field_get:kurff.Parameters.background)
+  return background_.GetNoArena();
+}
+inline void Parameters::set_background(const ::std::string& value) {
+  set_has_background();
+  background_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:kurff.Parameters.background)
+}
+#if LANG_CXX11
+inline void Parameters::set_background(::std::string&& value) {
+  set_has_background();
+  background_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:kurff.Parameters.background)
+}
+#endif
+inline void Parameters::set_background(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  set_has_background();
+  background_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:kurff.Parameters.background)
+}
+inline void Parameters::set_background(const char* value, size_t size) {
+  set_has_background();
+  background_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:kurff.Parameters.background)
+}
+inline ::std::string* Parameters::mutable_background() {
+  set_has_background();
+  // @@protoc_insertion_point(field_mutable:kurff.Parameters.background)
+  return background_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Parameters::release_background() {
+  // @@protoc_insertion_point(field_release:kurff.Parameters.background)
+  clear_has_background();
+  return background_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Parameters::set_allocated_background(::std::string* background) {
+  if (background != NULL) {
+    set_has_background();
+  } else {
+    clear_has_background();
+  }
+  background_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), background);
+  // @@protoc_insertion_point(field_set_allocated:kurff.Parameters.background)
+}
+
+// required int32 height = 8;
+inline bool Parameters::has_height() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void Parameters::set_has_height() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void Parameters::clear_has_height() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void Parameters::clear_height() {
+  height_ = 0;
+  clear_has_height();
+}
+inline ::google::protobuf::int32 Parameters::height() const {
+  // @@protoc_insertion_point(field_get:kurff.Parameters.height)
+  return height_;
+}
+inline void Parameters::set_height(::google::protobuf::int32 value) {
+  set_has_height();
+  height_ = value;
+  // @@protoc_insertion_point(field_set:kurff.Parameters.height)
+}
+
+// required int32 width = 9;
+inline bool Parameters::has_width() const {
+  return (_has_bits_[0] & 0x00000100u) != 0;
+}
+inline void Parameters::set_has_width() {
+  _has_bits_[0] |= 0x00000100u;
+}
+inline void Parameters::clear_has_width() {
+  _has_bits_[0] &= ~0x00000100u;
+}
+inline void Parameters::clear_width() {
+  width_ = 0;
+  clear_has_width();
+}
+inline ::google::protobuf::int32 Parameters::width() const {
+  // @@protoc_insertion_point(field_get:kurff.Parameters.width)
+  return width_;
+}
+inline void Parameters::set_width(::google::protobuf::int32 value) {
+  set_has_width();
+  width_ = value;
+  // @@protoc_insertion_point(field_set:kurff.Parameters.width)
+}
+
+// required bool rgb2gray = 10 [default = true];
+inline bool Parameters::has_rgb2gray() const {
+  return (_has_bits_[0] & 0x00000200u) != 0;
+}
+inline void Parameters::set_has_rgb2gray() {
+  _has_bits_[0] |= 0x00000200u;
+}
+inline void Parameters::clear_has_rgb2gray() {
+  _has_bits_[0] &= ~0x00000200u;
+}
+inline void Parameters::clear_rgb2gray() {
+  rgb2gray_ = true;
+  clear_has_rgb2gray();
+}
+inline bool Parameters::rgb2gray() const {
+  // @@protoc_insertion_point(field_get:kurff.Parameters.rgb2gray)
+  return rgb2gray_;
+}
+inline void Parameters::set_rgb2gray(bool value) {
+  set_has_rgb2gray();
+  rgb2gray_ = value;
+  // @@protoc_insertion_point(field_set:kurff.Parameters.rgb2gray)
+}
+
+// required .kurff.bounder center = 11;
+inline bool Parameters::has_center() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void Parameters::set_has_center() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void Parameters::clear_has_center() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void Parameters::clear_center() {
+  if (center_ != NULL) center_->Clear();
+  clear_has_center();
+}
+inline const ::kurff::bounder& Parameters::center() const {
+  const ::kurff::bounder* p = center_;
+  // @@protoc_insertion_point(field_get:kurff.Parameters.center)
+  return p != NULL ? *p : *reinterpret_cast<const ::kurff::bounder*>(
+      &::kurff::_bounder_default_instance_);
+}
+inline ::kurff::bounder* Parameters::release_center() {
+  // @@protoc_insertion_point(field_release:kurff.Parameters.center)
+  clear_has_center();
+  ::kurff::bounder* temp = center_;
+  center_ = NULL;
+  return temp;
+}
+inline ::kurff::bounder* Parameters::mutable_center() {
+  set_has_center();
+  if (center_ == NULL) {
+    center_ = new ::kurff::bounder;
+  }
+  // @@protoc_insertion_point(field_mutable:kurff.Parameters.center)
+  return center_;
+}
+inline void Parameters::set_allocated_center(::kurff::bounder* center) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == NULL) {
+    delete center_;
+  }
+  if (center) {
+    ::google::protobuf::Arena* submessage_arena = NULL;
+    if (message_arena != submessage_arena) {
+      center = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, center, submessage_arena);
+    }
+    set_has_center();
+  } else {
+    clear_has_center();
+  }
+  center_ = center;
+  // @@protoc_insertion_point(field_set_allocated:kurff.Parameters.center)
 }
 
 #ifdef __GNUC__

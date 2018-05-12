@@ -1,5 +1,5 @@
 
-#include "proto/kurff.pb.h"
+
 #include "core/parameters.hpp"
 using namespace kurff;
 int main(int argc, char* argv[]){

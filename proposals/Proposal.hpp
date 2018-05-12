@@ -18,6 +18,7 @@ namespace kurff{
             virtual void run(const Mat& image, vector<Box>& proposals) = 0;
         protected:
             int number_proposals_;
+            string name_;
     };
     CAFFE_DECLARE_REGISTRY(ProposalRegistry, Proposal, int);
     CAFFE_DEFINE_REGISTRY(ProposalRegistry, Proposal, int);

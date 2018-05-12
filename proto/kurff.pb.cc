@@ -98,16 +98,26 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::kurff::Parameters, scale_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::kurff::Parameters, gamma_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::kurff::Parameters, transform_),
-  0,
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::kurff::Parameters, background_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::kurff::Parameters, height_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::kurff::Parameters, width_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::kurff::Parameters, rgb2gray_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::kurff::Parameters, center_),
   1,
   2,
   3,
   4,
+  5,
   ~0u,
+  0,
+  7,
+  8,
+  9,
+  6,
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 7, sizeof(::kurff::bounder)},
-  { 9, 20, sizeof(::kurff::Parameters)},
+  { 9, 25, sizeof(::kurff::Parameters)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -138,15 +148,17 @@ void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\013kurff.proto\022\005kurff\"-\n\007bounder\022\020\n\005upper"
-      "\030\001 \002(\002:\0010\022\020\n\005lower\030\002 \002(\002:\0010\"\267\001\n\nParamete"
+      "\030\001 \002(\002:\0010\022\020\n\005lower\030\002 \002(\002:\0010\"\242\002\n\nParamete"
       "rs\022\034\n\004mean\030\001 \002(\0132\016.kurff.bounder\022\033\n\003std\030"
       "\002 \002(\0132\016.kurff.bounder\022\035\n\005angle\030\003 \002(\0132\016.k"
       "urff.bounder\022\035\n\005scale\030\004 \002(\0132\016.kurff.boun"
       "der\022\035\n\005gamma\030\005 \002(\0132\016.kurff.bounder\022\021\n\ttr"
-      "ansform\030\006 \003(\t"
+      "ansform\030\006 \003(\t\022\022\n\nbackground\030\007 \002(\t\022\016\n\006hei"
+      "ght\030\010 \002(\005\022\r\n\005width\030\t \002(\005\022\026\n\010rgb2gray\030\n \002"
+      "(\010:\004true\022\036\n\006center\030\013 \002(\0132\016.kurff.bounder"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 253);
+      descriptor, 360);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "kurff.proto", &protobuf_RegisterTypes);
 }
@@ -482,6 +494,8 @@ void Parameters::InitAsDefaultInstance() {
       ::kurff::bounder::internal_default_instance());
   ::kurff::_Parameters_default_instance_._instance.get_mutable()->gamma_ = const_cast< ::kurff::bounder*>(
       ::kurff::bounder::internal_default_instance());
+  ::kurff::_Parameters_default_instance_._instance.get_mutable()->center_ = const_cast< ::kurff::bounder*>(
+      ::kurff::bounder::internal_default_instance());
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int Parameters::kMeanFieldNumber;
@@ -490,6 +504,11 @@ const int Parameters::kAngleFieldNumber;
 const int Parameters::kScaleFieldNumber;
 const int Parameters::kGammaFieldNumber;
 const int Parameters::kTransformFieldNumber;
+const int Parameters::kBackgroundFieldNumber;
+const int Parameters::kHeightFieldNumber;
+const int Parameters::kWidthFieldNumber;
+const int Parameters::kRgb2GrayFieldNumber;
+const int Parameters::kCenterFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Parameters::Parameters()
@@ -507,6 +526,10 @@ Parameters::Parameters(const Parameters& from)
       _cached_size_(0),
       transform_(from.transform_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  background_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.has_background()) {
+    background_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.background_);
+  }
   if (from.has_mean()) {
     mean_ = new ::kurff::bounder(*from.mean_);
   } else {
@@ -532,14 +555,24 @@ Parameters::Parameters(const Parameters& from)
   } else {
     gamma_ = NULL;
   }
+  if (from.has_center()) {
+    center_ = new ::kurff::bounder(*from.center_);
+  } else {
+    center_ = NULL;
+  }
+  ::memcpy(&height_, &from.height_,
+    static_cast<size_t>(reinterpret_cast<char*>(&rgb2gray_) -
+    reinterpret_cast<char*>(&height_)) + sizeof(rgb2gray_));
   // @@protoc_insertion_point(copy_constructor:kurff.Parameters)
 }
 
 void Parameters::SharedCtor() {
   _cached_size_ = 0;
+  background_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&mean_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&gamma_) -
-      reinterpret_cast<char*>(&mean_)) + sizeof(gamma_));
+      reinterpret_cast<char*>(&width_) -
+      reinterpret_cast<char*>(&mean_)) + sizeof(width_));
+  rgb2gray_ = true;
 }
 
 Parameters::~Parameters() {
@@ -548,11 +581,13 @@ Parameters::~Parameters() {
 }
 
 void Parameters::SharedDtor() {
+  background_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != internal_default_instance()) delete mean_;
   if (this != internal_default_instance()) delete std_;
   if (this != internal_default_instance()) delete angle_;
   if (this != internal_default_instance()) delete scale_;
   if (this != internal_default_instance()) delete gamma_;
+  if (this != internal_default_instance()) delete center_;
 }
 
 void Parameters::SetCachedSize(int size) const {
@@ -586,27 +621,40 @@ void Parameters::Clear() {
 
   transform_.Clear();
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 31u) {
+  if (cached_has_bits & 127u) {
     if (cached_has_bits & 0x00000001u) {
+      GOOGLE_DCHECK(!background_.IsDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited()));
+      (*background_.UnsafeRawStringPointer())->clear();
+    }
+    if (cached_has_bits & 0x00000002u) {
       GOOGLE_DCHECK(mean_ != NULL);
       mean_->Clear();
     }
-    if (cached_has_bits & 0x00000002u) {
+    if (cached_has_bits & 0x00000004u) {
       GOOGLE_DCHECK(std_ != NULL);
       std_->Clear();
     }
-    if (cached_has_bits & 0x00000004u) {
+    if (cached_has_bits & 0x00000008u) {
       GOOGLE_DCHECK(angle_ != NULL);
       angle_->Clear();
     }
-    if (cached_has_bits & 0x00000008u) {
+    if (cached_has_bits & 0x00000010u) {
       GOOGLE_DCHECK(scale_ != NULL);
       scale_->Clear();
     }
-    if (cached_has_bits & 0x00000010u) {
+    if (cached_has_bits & 0x00000020u) {
       GOOGLE_DCHECK(gamma_ != NULL);
       gamma_->Clear();
     }
+    if (cached_has_bits & 0x00000040u) {
+      GOOGLE_DCHECK(center_ != NULL);
+      center_->Clear();
+    }
+  }
+  height_ = 0;
+  if (cached_has_bits & 768u) {
+    width_ = 0;
+    rgb2gray_ = true;
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear();
@@ -699,6 +747,76 @@ bool Parameters::MergePartialFromCodedStream(
         break;
       }
 
+      // required string background = 7;
+      case 7: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(58u /* 58 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_background()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+            this->background().data(), static_cast<int>(this->background().length()),
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "kurff.Parameters.background");
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // required int32 height = 8;
+      case 8: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(64u /* 64 & 0xFF */)) {
+          set_has_height();
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &height_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // required int32 width = 9;
+      case 9: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(72u /* 72 & 0xFF */)) {
+          set_has_width();
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &width_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // required bool rgb2gray = 10 [default = true];
+      case 10: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(80u /* 80 & 0xFF */)) {
+          set_has_rgb2gray();
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &rgb2gray_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // required .kurff.bounder center = 11;
+      case 11: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(90u /* 90 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_center()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -727,31 +845,31 @@ void Parameters::SerializeWithCachedSizes(
 
   cached_has_bits = _has_bits_[0];
   // required .kurff.bounder mean = 1;
-  if (cached_has_bits & 0x00000001u) {
+  if (cached_has_bits & 0x00000002u) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, *this->mean_, output);
   }
 
   // required .kurff.bounder std = 2;
-  if (cached_has_bits & 0x00000002u) {
+  if (cached_has_bits & 0x00000004u) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       2, *this->std_, output);
   }
 
   // required .kurff.bounder angle = 3;
-  if (cached_has_bits & 0x00000004u) {
+  if (cached_has_bits & 0x00000008u) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       3, *this->angle_, output);
   }
 
   // required .kurff.bounder scale = 4;
-  if (cached_has_bits & 0x00000008u) {
+  if (cached_has_bits & 0x00000010u) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       4, *this->scale_, output);
   }
 
   // required .kurff.bounder gamma = 5;
-  if (cached_has_bits & 0x00000010u) {
+  if (cached_has_bits & 0x00000020u) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       5, *this->gamma_, output);
   }
@@ -764,6 +882,37 @@ void Parameters::SerializeWithCachedSizes(
       "kurff.Parameters.transform");
     ::google::protobuf::internal::WireFormatLite::WriteString(
       6, this->transform(i), output);
+  }
+
+  // required string background = 7;
+  if (cached_has_bits & 0x00000001u) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->background().data(), static_cast<int>(this->background().length()),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "kurff.Parameters.background");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      7, this->background(), output);
+  }
+
+  // required int32 height = 8;
+  if (cached_has_bits & 0x00000080u) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(8, this->height(), output);
+  }
+
+  // required int32 width = 9;
+  if (cached_has_bits & 0x00000100u) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(9, this->width(), output);
+  }
+
+  // required bool rgb2gray = 10 [default = true];
+  if (cached_has_bits & 0x00000200u) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(10, this->rgb2gray(), output);
+  }
+
+  // required .kurff.bounder center = 11;
+  if (cached_has_bits & 0x00000040u) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      11, *this->center_, output);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -782,35 +931,35 @@ void Parameters::SerializeWithCachedSizes(
 
   cached_has_bits = _has_bits_[0];
   // required .kurff.bounder mean = 1;
-  if (cached_has_bits & 0x00000001u) {
+  if (cached_has_bits & 0x00000002u) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
         1, *this->mean_, deterministic, target);
   }
 
   // required .kurff.bounder std = 2;
-  if (cached_has_bits & 0x00000002u) {
+  if (cached_has_bits & 0x00000004u) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
         2, *this->std_, deterministic, target);
   }
 
   // required .kurff.bounder angle = 3;
-  if (cached_has_bits & 0x00000004u) {
+  if (cached_has_bits & 0x00000008u) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
         3, *this->angle_, deterministic, target);
   }
 
   // required .kurff.bounder scale = 4;
-  if (cached_has_bits & 0x00000008u) {
+  if (cached_has_bits & 0x00000010u) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
         4, *this->scale_, deterministic, target);
   }
 
   // required .kurff.bounder gamma = 5;
-  if (cached_has_bits & 0x00000010u) {
+  if (cached_has_bits & 0x00000020u) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
         5, *this->gamma_, deterministic, target);
@@ -826,6 +975,39 @@ void Parameters::SerializeWithCachedSizes(
       WriteStringToArray(6, this->transform(i), target);
   }
 
+  // required string background = 7;
+  if (cached_has_bits & 0x00000001u) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->background().data(), static_cast<int>(this->background().length()),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "kurff.Parameters.background");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        7, this->background(), target);
+  }
+
+  // required int32 height = 8;
+  if (cached_has_bits & 0x00000080u) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(8, this->height(), target);
+  }
+
+  // required int32 width = 9;
+  if (cached_has_bits & 0x00000100u) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(9, this->width(), target);
+  }
+
+  // required bool rgb2gray = 10 [default = true];
+  if (cached_has_bits & 0x00000200u) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(10, this->rgb2gray(), target);
+  }
+
+  // required .kurff.bounder center = 11;
+  if (cached_has_bits & 0x00000040u) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        11, *this->center_, deterministic, target);
+  }
+
   if (_internal_metadata_.have_unknown_fields()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields(), target);
@@ -837,6 +1019,13 @@ void Parameters::SerializeWithCachedSizes(
 size_t Parameters::RequiredFieldsByteSizeFallback() const {
 // @@protoc_insertion_point(required_fields_byte_size_fallback_start:kurff.Parameters)
   size_t total_size = 0;
+
+  if (has_background()) {
+    // required string background = 7;
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->background());
+  }
 
   if (has_mean()) {
     // required .kurff.bounder mean = 1;
@@ -873,6 +1062,32 @@ size_t Parameters::RequiredFieldsByteSizeFallback() const {
         *this->gamma_);
   }
 
+  if (has_center()) {
+    // required .kurff.bounder center = 11;
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSize(
+        *this->center_);
+  }
+
+  if (has_height()) {
+    // required int32 height = 8;
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->height());
+  }
+
+  if (has_width()) {
+    // required int32 width = 9;
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->width());
+  }
+
+  if (has_rgb2gray()) {
+    // required bool rgb2gray = 10 [default = true];
+    total_size += 1 + 1;
+  }
+
   return total_size;
 }
 size_t Parameters::ByteSizeLong() const {
@@ -884,7 +1099,12 @@ size_t Parameters::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         _internal_metadata_.unknown_fields());
   }
-  if (((_has_bits_[0] & 0x0000001f) ^ 0x0000001f) == 0) {  // All required fields are present.
+  if (((_has_bits_[0] & 0x000003ff) ^ 0x000003ff) == 0) {  // All required fields are present.
+    // required string background = 7;
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->background());
+
     // required .kurff.bounder mean = 1;
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
@@ -909,6 +1129,24 @@ size_t Parameters::ByteSizeLong() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
         *this->gamma_);
+
+    // required .kurff.bounder center = 11;
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSize(
+        *this->center_);
+
+    // required int32 height = 8;
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->height());
+
+    // required int32 width = 9;
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->width());
+
+    // required bool rgb2gray = 10 [default = true];
+    total_size += 1 + 1;
 
   } else {
     total_size += RequiredFieldsByteSizeFallback();
@@ -952,22 +1190,42 @@ void Parameters::MergeFrom(const Parameters& from) {
 
   transform_.MergeFrom(from.transform_);
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 31u) {
+  if (cached_has_bits & 255u) {
     if (cached_has_bits & 0x00000001u) {
-      mutable_mean()->::kurff::bounder::MergeFrom(from.mean());
+      set_has_background();
+      background_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.background_);
     }
     if (cached_has_bits & 0x00000002u) {
-      mutable_std()->::kurff::bounder::MergeFrom(from.std());
+      mutable_mean()->::kurff::bounder::MergeFrom(from.mean());
     }
     if (cached_has_bits & 0x00000004u) {
-      mutable_angle()->::kurff::bounder::MergeFrom(from.angle());
+      mutable_std()->::kurff::bounder::MergeFrom(from.std());
     }
     if (cached_has_bits & 0x00000008u) {
-      mutable_scale()->::kurff::bounder::MergeFrom(from.scale());
+      mutable_angle()->::kurff::bounder::MergeFrom(from.angle());
     }
     if (cached_has_bits & 0x00000010u) {
+      mutable_scale()->::kurff::bounder::MergeFrom(from.scale());
+    }
+    if (cached_has_bits & 0x00000020u) {
       mutable_gamma()->::kurff::bounder::MergeFrom(from.gamma());
     }
+    if (cached_has_bits & 0x00000040u) {
+      mutable_center()->::kurff::bounder::MergeFrom(from.center());
+    }
+    if (cached_has_bits & 0x00000080u) {
+      height_ = from.height_;
+    }
+    _has_bits_[0] |= cached_has_bits;
+  }
+  if (cached_has_bits & 768u) {
+    if (cached_has_bits & 0x00000100u) {
+      width_ = from.width_;
+    }
+    if (cached_has_bits & 0x00000200u) {
+      rgb2gray_ = from.rgb2gray_;
+    }
+    _has_bits_[0] |= cached_has_bits;
   }
 }
 
@@ -986,7 +1244,7 @@ void Parameters::CopyFrom(const Parameters& from) {
 }
 
 bool Parameters::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000001f) != 0x0000001f) return false;
+  if ((_has_bits_[0] & 0x000003ff) != 0x000003ff) return false;
   if (has_mean()) {
     if (!this->mean_->IsInitialized()) return false;
   }
@@ -1002,6 +1260,9 @@ bool Parameters::IsInitialized() const {
   if (has_gamma()) {
     if (!this->gamma_->IsInitialized()) return false;
   }
+  if (has_center()) {
+    if (!this->center_->IsInitialized()) return false;
+  }
   return true;
 }
 
@@ -1012,11 +1273,16 @@ void Parameters::Swap(Parameters* other) {
 void Parameters::InternalSwap(Parameters* other) {
   using std::swap;
   transform_.InternalSwap(&other->transform_);
+  background_.Swap(&other->background_);
   swap(mean_, other->mean_);
   swap(std_, other->std_);
   swap(angle_, other->angle_);
   swap(scale_, other->scale_);
   swap(gamma_, other->gamma_);
+  swap(center_, other->center_);
+  swap(height_, other->height_);
+  swap(width_, other->width_);
+  swap(rgb2gray_, other->rgb2gray_);
   swap(_has_bits_[0], other->_has_bits_[0]);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);

@@ -11,6 +11,8 @@ namespace kurff
  * 
  * The place for color constants
  */
+
+
 class Colors
 {
 public:
@@ -162,6 +164,9 @@ public:
     static const cv::Scalar Gainsboro; ///< <SPAN style="background: #DCDCDC;">&nbsp;&nbsp;</SPAN> RGB: (220,220,220)  HEX: #DCDCDC
     static const cv::Scalar WhiteSmoke; ///< <SPAN style="background: #F5F5F5;">&nbsp;&nbsp;</SPAN> RGB: (245,245,245)  HEX: #F5F5F5
     static const cv::Scalar White; ///< <SPAN style="background: #FFFFFF;">&nbsp;&nbsp;</SPAN> RGB: (255,255,255)  HEX: #FFFFFF
+
+    
+
 };
 
 }

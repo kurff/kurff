@@ -7,16 +7,16 @@
 #include <vector>
 #include <memory>
 #include <string>
-#include ""
+#include "synthesis/deform.hpp"
+#include "core/common.hpp"
 using namespace cv;
 using namespace std;
 namespace kurff{
-    template<typename T>
     class Synthesis{
         public:
-            Synthesis(string fonts_list_file, string path): fonts_list_file_(fonts_list_file),path_(path){
-                height_ = 64;
-                width_= 64;
+            Synthesis(string fonts_list_file): fonts_list_file_(fonts_list_file), max_count_(40000){
+                //height_ = 64;
+                //width_= 64;
                 count_ = 0;
                 
             }
@@ -27,58 +27,83 @@ namespace kurff{
             }
 
             void init(Parameters* parameters){
+                height_ = parameters->height();
+                width_ = parameters->width();
                 ifstream fin(fonts_list_file_.c_str(), ios::in);
                 string file;
                 fonts_type_.clear();
                 while(fin >> file){
                     fonts_type_.push_back(file);
                 }
-
+                fin.close();
+                LOG(INFO)<<"found "<< fonts_type_.size()<<" font file ttf";
                 int number = fonts_type_.size();
-                fonts_.resize(number);
+                fonts_.clear();
                 for(int i = 0; i < number; ++ i){
-                    fonts_[i] = new Fonts(height_, width_);
-                    fonts_[i]->init(fonts_type_[i]);
+                    shared_ptr<Fonts> p (new Fonts(height_, width_));
+                    fonts_.push_back(p);
+                    p->init(fonts_type_[i]);
+                    LOG(INFO)<<"initialize "<<i <<" "<< fonts_type_[i];
                 }
+                LOG(INFO)<<"initialize ttf done";
                 transform_.clear();
                 for(int i = 0; i < parameters->transform_size(); ++ i){
-                    std::shared_ptr<T> ptr ( SimulationRegistry->Create( parameters->transform(i), parameters) );
+                    LOG(INFO)<< "creating "<<parameters->transform(i);
+                    std::shared_ptr<Simulation> ptr = SimulationRegistry()->Create(parameters->transform(i), parameters);
                     transform_.push_back(ptr);
                 }
             }
 
-            void run( ){
+            void run(string file, string folder){
+                std::ofstream f(file.c_str(), ios::out);
                 vector<Point2f> keypoints;
                 for(int i = 0; i < fonts_.size(); ++i){
-                    for(int j = 0; j < characters_.length(); ++ j){
+                    for(auto character : map_int2string ){                 
+                        //LOG(INFO)<< character.second;
                         ++ count_;
-                        fonts_[i]->draw(characters_, j);
+                        fonts_[i]->draw(character.second, 0);
                         Mat image = fonts_[i]->get();
-                        cv::imshow("src", image);
+                        //cv::imshow("src", image);
+                        image.copyTo(mask_);
+                        Mat output;
+                        run_transform(image, output);
+                        cv::imshow("src", output);
+                        cv::imwrite(folder+"/"+std::to_string(count_)+".png", output);
+                        f << std::to_string(count_)+".png"<<" "<<character.second<<std::endl;
+
                         //visualize_keypoints(image, keypoints);
-                        
+                        cv::waitKey(1);
 
                     }
                 }
-
+                f.close();
             }
 
-            void destroy(){
-                for(int i= 0; i < fonts_.size(); ++ i){
-                    delete fonts_[i];
+
+            void run_transform(const cv::Mat& image, cv::Mat& output){
+
+                image.copyTo(output);
+                cv::Mat temp;
+                image.copyTo(temp);
+                for(auto trans : transform_){
+                    trans->run(output, temp);
+                    temp.copyTo(output);
                 }
+
             }
+
+            cv::Mat mask(){return mask_;}
 
         protected:
-            vector<Fonts*> fonts_;
+            vector<std::shared_ptr<Fonts> > fonts_;
             vector<string> fonts_type_;
             string fonts_list_file_;
-            shared_ptr<Simulation> sim_;
             int height_;
             int width_;
-            string path_;
             int count_;
-            vector<std::shared_ptr<T> > transform_;
+            cv::Mat mask_;
+            vector<std::shared_ptr<Simulation> > transform_;
+            int max_count_;
             
     };
 

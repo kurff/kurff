@@ -18,7 +18,11 @@ message Parameters{
     required bounder scale = 4;
     required bounder gamma = 5;
     repeated string transform = 6;
-
+    required string background = 7;
+    required int32 height = 8;
+    required int32 width = 9;
+    required bool rgb2gray = 10 [default=true];
+    required bounder center = 11;
 
 
 

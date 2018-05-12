@@ -50,6 +50,7 @@ namespace kurff{
 
                 
             }
+        protected:
             
 
     };

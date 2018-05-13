@@ -3,6 +3,7 @@ project(kurff)
 add_compile_options(-std=c++11)
 include_directories(./)
 include_directories(/usr/include/freetype2/)
+
 add_executable(test_common test/test_common.cpp proto/kurff.pb.cc)
 target_link_libraries(test_common protobuf glog opencv_core opencv_highgui opencv_imgproc)
 link_directories(/usr/local/lib)
@@ -17,3 +18,6 @@ target_link_libraries(main protobuf glog)
 
 add_executable(test_synthesis test/test_synthesis.cpp proto/kurff.pb.cc)
 target_link_libraries(test_synthesis protobuf glog opencv_core opencv_highgui opencv_imgproc freetype) 
+
+add_executable(test_network test/test_network.cpp classifier/net.cc)
+target_link_libraries(test_network caffe2 caffe2_protos opencv_core opencv_highgui opencv_imgproc glog)

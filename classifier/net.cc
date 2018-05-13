@@ -1,4 +1,4 @@
-#include "network/net.h"
+#include "classifier/net.h"
 
 #ifdef WITH_CUDA
 #include "caffe2/core/context_gpu.h"
@@ -7,7 +7,7 @@
 #include "google/protobuf/io/zero_copy_stream_impl.h"
 #include "google/protobuf/text_format.h"
 #include "glog/logging.h"
-namespace Beta {
+namespace kurff {
 using namespace caffe2;
 const std::set<std::string> trainable_ops({
     "Add",          "AffineScale",
@@ -26,7 +26,7 @@ const std::set<std::string> trainable_ops({
 
 const std::set<std::string> non_trainable_ops({
     "Accuracy", "Cast", "Cout", "ConstantFill", "Iter", "Scale", "StopGradient",
-    "TensorProtosDBInput", "TimePlot", "ShowWorst",
+    "TensorProtosDBInput", "TimePlot", "ShowWorst","LearningRate"
 });
 
 const std::map<std::string, std::string> custom_gradient({

@@ -10,6 +10,7 @@ using namespace std;
 using namespace cv;
 
 namespace kurff{
+    template<typename DataContext>
     class Regression{
         public:
             Regression(){
@@ -19,6 +20,8 @@ namespace kurff{
 
             }
             virtual bool initial(string model_def, string model) = 0;
+
+            virtual bool build() = 0;
 
             virtual void classify(const Mat& input, const vector<Box>& previous, vector<Box>& current) = 0;
 
@@ -31,9 +34,10 @@ namespace kurff{
     CAFFE_DECLARE_REGISTRY(RegressionRegistry, Regression);
     CAFFE_DEFINE_REGISTRY(RegressionRegistry, Regression);
 
-    class CNNRegression : public Regression{
+    template<typename DataContext>
+    class CNNRegression : public Regression<DataContext>{
         public:
-            CNNRegression(){
+            CNNRegression() : Regression<DataContext>(){
 
             }
             ~CNNRegression(){
@@ -42,7 +46,13 @@ namespace kurff{
 
             bool initial(string model_def, string model){
                 
+                return true;
 
+            }
+
+            bool build(){
+
+                return true;
             }
 
             void classify(const Mat& input, const vector<Box>& previous, vector<Box>& current){

@@ -7,7 +7,6 @@
 using namespace kurff;
 int main(int argc, char* argv[]){
     std::shared_ptr<Proposal> proposal (ProposalRegistry()->Create("FASTProposal",100));
-
     vector<Box> boxes;
     cv::Mat image = cv::imread(argv[1]);
     cv::imshow("src", image);
@@ -15,7 +14,20 @@ int main(int argc, char* argv[]){
     proposal->run(image,boxes);
     if(boxes.size()>=1)
     LOG(INFO)<< boxes[0].x<<" "<<boxes[0].y;
-    visualize<Box>(image, boxes, Colors::Red);
-    cv::imwrite("result.jpg",image);
+    
+
+    vector<Box> mser_boxes;
+    std::shared_ptr<Proposal> mser (ProposalRegistry()->Create("MSERProposal",100));
+    mser->run(image, mser_boxes);
+
+    cv::Mat vis_mser;
+    image.copyTo(vis_mser);
+    visualize<Box>(vis_mser, mser_boxes, Colors::Red);
+    cv::imwrite("mser_result.jpg", vis_mser);
+
+    cv::Mat vis_fast;
+    image.copyTo(vis_fast);
+    visualize<Box>(vis_fast, boxes, Colors::Red);
+    cv::imwrite("fast_result.jpg",vis_fast);
     return 0;
 }

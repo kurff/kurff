@@ -8,16 +8,21 @@
 #include "caffe2/core/tensor.h"
 #include <map>
 using namespace std;
+using namespace caffe2;
 namespace kurff{
     
     template<typename DataContext>
     class Network{
         typedef typename caffe2::Tensor<DataContext> T;
+
         public:
             Network(const std::map<string, vector<int> >& inputs, const std::map<string, vector<int> >& outputs
-            , const std::map<string , vector<int> > labels, bool training ): inputs_(inputs),outputs_(outputs), labels_(labels)
-            , training_(training){
-                
+            , const std::map<string , vector<int> > labels, bool training, bool use_gpu = false )
+            : training_(training), inputs_(inputs), outputs_(outputs), labels_(labels), use_gpu_(use_gpu){
+                LOG(INFO)<<"create network";
+                // inputs_.insert(inputs.begin(), inputs.end());
+                // outputs_.insert(outputs.begin(), outputs.end());
+                // labels_.insert(labels.begin(), labels.end());
 
             }
             Network(){
@@ -29,7 +34,7 @@ namespace kurff{
             }
 
         public:
-            void init(NetDef& init_model, NetDef& predict_model, NetDef& update_model, bool use_gpu){
+            void init(NetDef& init_model, NetDef& predict_model, NetDef& update_model){
                 
                 init_model_ = init_model;
                 predict_model_ = predict_model;
@@ -37,7 +42,7 @@ namespace kurff{
                 init_net_.reset(new Net(init_model_));
                 predict_net_.reset(new Net(predict_model_));
                 update_net_.reset(new Net(update_model_)); 
-                if(use_gpu){
+                if(use_gpu_){
                     init_net_->SetDeviceCUDA();
                     predict_net_->SetDeviceCUDA();
                     update_net_->SetDeviceCUDA();
@@ -61,24 +66,42 @@ namespace kurff{
                     label_pai->Resize(lab.second);
                     label_pai->template mutable_data<int>();
                 }
-                
-               
-                
+            }
 
+            void allocate(){
+                init_ = CreateNet( init_model_,workspace_.get());
+                LOG(INFO)<<"create init network finish";
+                predict_ = CreateNet(predict_model_, workspace_.get());
+                LOG(INFO)<<"create predict network finish";
+                update_ = CreateNet(update_model_, workspace_.get());
+                LOG(INFO)<<"create update network finish";
             }
 
             void create_network(){
                 //create_lenet(training);
+                LOG(INFO)<<"create network";
+
                 allocate_inputs();
+                LOG(INFO)<<"allocate inputs";
                 add_feed_data();
+                LOG(INFO)<<"add feed data";
                 add_label_data();
+                LOG(INFO)<<"add label data";
                 auto input = inputs_.find("data");
                 if(input == inputs_.end()){
                     LOG(INFO)<<"can not find data input";
                 }
                 string middle;
                 create_base_network(input->first,middle);
-                
+                LOG(INFO)<<"create base network";
+                auto output = outputs_.find("class");
+                if(output == outputs_.end()){
+                    LOG(INFO)<<"can not find data output";
+                }
+
+                create_head_classifier(middle,output->first, output->second[0]);
+                LOG(INFO)<<"create head classifier";
+                create_classification_loss("class", "label");
 
 
 
@@ -115,7 +138,7 @@ namespace kurff{
                 }
             }
 
-            void add_fc_block(const string inputs, 
+            void add_fc_block_with_output(const string inputs, 
              const string outputs, vector<int> shapes,
                 int index, bool add_relu = true, bool add_softmax = false
                 , bool add_tanh = false){
@@ -210,38 +233,89 @@ namespace kurff{
             string& output){
                 string output_block1;
                 string output_block2;
-                add_convolutional_block(input, output_block1,{32,3,3,3},0);
-                add_convolutional_block(output_block1, output_block2,{32,32,3,3},1);
-                add_convolutional_block(output_block2, output,{32,32,3,3},2);
+                string output_block3;
+                add_convolutional_block(input, output_block1,{32,3,3,3},0,true);
+                add_convolutional_block(output_block1, output_block2,{32,32,3,3},1, true);
+                add_convolutional_block(output_block2, output_block3,{32,32,3,3},2, true);
+                add_convolutional_block(output_block3, output,{32,32,3,3},3,true);
                 //vector<string> fc_block1;
                 //vector<string> fc_block2;
                 //add_fc_block(output_block3,fc_block1,{100,},1,0,1);
                 //add_fc_block(fc_block1,fc_block2,{},1,1,0);
             }
 
-            void create_head(const string inputs, 
+            void create_head_classifier(const string input, const string output, int num_output){
+                string middle;
+                add_fc_block(input,middle,{100,8*8*32},0);
+                add_fc_block_with_output(middle, output, {num_output,100} ,1 ,0,1,0);
+            }
+            
+
+
+            void create_head_regression(const string inputs, 
             const string outputs){
                 string output_block1;
                 
-                add_convolutional_block(inputs, output_block1, {2,32,1,1},3);
-                //vector<string> fc_block1;
+                // add_convolutional_block(inputs, output_block1, {2,32,1,1},3);
+                // //vector<string> fc_block1;
 
-                add_fc_block(output_block1, outputs,{ output_dim_,162},0,0,0,1);
-                string output_block2;
-                add_convolutional_block(inputs,output_block2,{1,32,1,1},4);
-                //vector<string> fc_block2;
-                add_fc_block(output_block2, outputs,{1,81},1,0,1,0);
+                // add_fc_block(output_block1, outputs,{ output_dim_,162},0,0,0,1);
+                // string output_block2;
+                // add_convolutional_block(inputs,output_block2,{1,32,1,1},4);
+                // //vector<string> fc_block2;
+                // add_fc_block(output_block2, outputs,{1,81},1,0,1,0);
+
+            }
+
+            void add_iter(){
+                update_net_->AddInput("ITER");
+                init_net_->AddConstantFillOp({1}, 1.f, "ONE");
+                if(use_gpu_){
+                    init_net_->AddConstantFillOp({1}, (int64_t)0, "ITER")->mutable_device_option()->set_device_type(CUDA);
+                }else{
+                    init_net_->AddConstantFillOp({1}, (int64_t)0, "ITER")->mutable_device_option()->set_device_type(CPU);
+                }
+                update_net_->AddInput("ONE");
+                update_net_->AddIterOp("ITER");
+                update_net_->AddLearningRateOp("ITER", "LR", 0.1);
+                LOG(INFO)<<"add input and iter";
+            }
+
+            void add_update(){
+                params_.clear();
+                for(auto op : init_model_.op()){
+                    for(auto out: op.output()){
+                        if(!(out.compare("ITER")==0 || out.compare("ONE")==0)){
+                            params_.push_back(out);
+                        }
+                    }
+                }
+                for(auto param : params_){
+                    LOG(INFO)<<"init model output: "<<param;
+                    update_net_->AddWeightedSumOp({param,"ONE", param+"_grad","LR"},param);
+                }
+            }
+
+            void create_classification_loss(const string predict, const string label){
+                add_iter();
+                update_net_->AddLabelCrossEntropyOp(predict,label,"xent");
+                update_net_->AddAveragedLossOp("xent","loss");
+                update_net_->AddConstantFillWithOp(1.f, "loss", "loss_grad");
+                update_net_->AddGradientOps();
+                add_update();
+            }
+
+
+
+            void create_regression_loss(){
+
 
             }
 
             void create_multi_task_loss(const vector<string>& predict, const vector<string>& label ){
                 //update_net_->AddLabelCrossEntropyOp();
-                update_net_->AddInput("ITER");
-                init_net_->AddConstantFillOp({1}, 1.f, "ONE");
-                init_net_->AddConstantFillOp({1}, (int64_t)0, "ITER")->mutable_device_option()->set_device_type(CPU);
-                update_net_->AddInput("ONE");
-                update_net_->AddIterOp("ITER");
-                LOG(INFO)<<"add input and iter";
+                add_iter();
+               
                 update_net_->AddConstantFillOp({1}, 0.5f,"weight1");
                 update_net_->AddConstantFillOp({1}, 0.5f,"weight2");
 
@@ -281,100 +355,100 @@ namespace kurff{
 
 
             void create_lenet(){
-                update_net_->AddInput("data");
-                predict_net_->AddInput("data");
+                // update_net_->AddInput("data");
+                // predict_net_->AddInput("data");
 
-                update_net_->AddInput("pai");
-                update_net_->AddConvOp("data", "conv1_w", "conv1_b", "conv1", 1, 0, 5);
-                predict_net_->AddConvOp("data", "conv1_w", "conv1_b", "conv1", 1, 0, 5);
+                // update_net_->AddInput("pai");
+                // update_net_->AddConvOp("data", "conv1_w", "conv1_b", "conv1", 1, 0, 5);
+                // predict_net_->AddConvOp("data", "conv1_w", "conv1_b", "conv1", 1, 0, 5);
 
-                update_net_->AddReluOp("conv1", "conv1");
-                predict_net_->AddReluOp("conv1", "conv1");
+                // update_net_->AddReluOp("conv1", "conv1");
+                // predict_net_->AddReluOp("conv1", "conv1");
                 
-                update_net_->AddInput("conv1_w");
-                predict_net_->AddInput("conv1_w");
+                // update_net_->AddInput("conv1_w");
+                // predict_net_->AddInput("conv1_w");
                
-                update_net_->AddInput("conv1_b");
-                predict_net_->AddInput("conv1_b");
+                // update_net_->AddInput("conv1_b");
+                // predict_net_->AddInput("conv1_b");
 
-                if (training_) {
-                    init_net_->AddXavierFillOp({20, 3, 5, 5}, "conv1_w");
-                    init_net_->AddConstantFillOp({20}, "conv1_b");
-                }
+                // if (training_) {
+                //     init_net_->AddXavierFillOp({20, 3, 5, 5}, "conv1_w");
+                //     init_net_->AddConstantFillOp({20}, "conv1_b");
+                // }
 
-                update_net_->AddMaxPoolOp("conv1", "pool1", 2, 0, 2);
-                update_net_->AddConvOp("pool1", "conv2_w", "conv2_b", "conv2", 1, 0, 5);
-                update_net_->AddInput("conv2_w");
-                update_net_->AddInput("conv2_b");
+                // update_net_->AddMaxPoolOp("conv1", "pool1", 2, 0, 2);
+                // update_net_->AddConvOp("pool1", "conv2_w", "conv2_b", "conv2", 1, 0, 5);
+                // update_net_->AddInput("conv2_w");
+                // update_net_->AddInput("conv2_b");
 
-                predict_net_->AddMaxPoolOp("conv1", "pool1", 2, 0, 2);
-                predict_net_->AddConvOp("pool1", "conv2_w", "conv2_b", "conv2", 1, 0, 5);
-                predict_net_->AddInput("conv2_w");
-                predict_net_->AddInput("conv2_b");
+                // predict_net_->AddMaxPoolOp("conv1", "pool1", 2, 0, 2);
+                // predict_net_->AddConvOp("pool1", "conv2_w", "conv2_b", "conv2", 1, 0, 5);
+                // predict_net_->AddInput("conv2_w");
+                // predict_net_->AddInput("conv2_b");
 
-                if (training_) {
-                    init_net_->AddXavierFillOp({50, 20, 5, 5}, "conv2_w");
-                    init_net_->AddConstantFillOp({50}, "conv2_b");
-                }
-
-
-
-                update_net_->AddMaxPoolOp("conv2", "pool2", 2, 0, 2);
-                update_net_->AddFcOp("pool2", "fc3_w", "fc3_b", "fc3");
-                update_net_->AddInput("fc3_w");
-                update_net_->AddInput("fc3_b");
-
-                
-
-                predict_net_->AddMaxPoolOp("conv2", "pool2", 2, 0, 2);
-                predict_net_->AddFcOp("pool2", "fc3_w", "fc3_b", "fc3");
-                predict_net_->AddInput("fc3_w");
-                predict_net_->AddInput("fc3_b");
+                // if (training_) {
+                //     init_net_->AddXavierFillOp({50, 20, 5, 5}, "conv2_w");
+                //     init_net_->AddConstantFillOp({50}, "conv2_b");
+                // }
 
 
-                if (training_) {
-                    init_net_->AddXavierFillOp({500, 50}, "fc3_w");
-                    init_net_->AddConstantFillOp({500}, "fc3_b");
-                }
 
-
-                update_net_->AddReluOp("fc3", "fc3");
+                // update_net_->AddMaxPoolOp("conv2", "pool2", 2, 0, 2);
+                // update_net_->AddFcOp("pool2", "fc3_w", "fc3_b", "fc3");
+                // update_net_->AddInput("fc3_w");
+                // update_net_->AddInput("fc3_b");
 
                 
-                update_net_->AddFcOp("fc3", "pred_w", "pred_b", "pred");
-                update_net_->AddInput("pred_w");
-                update_net_->AddInput("pred_b");
+
+                // predict_net_->AddMaxPoolOp("conv2", "pool2", 2, 0, 2);
+                // predict_net_->AddFcOp("pool2", "fc3_w", "fc3_b", "fc3");
+                // predict_net_->AddInput("fc3_w");
+                // predict_net_->AddInput("fc3_b");
+
+
+                // if (training_) {
+                //     init_net_->AddXavierFillOp({500, 50}, "fc3_w");
+                //     init_net_->AddConstantFillOp({500}, "fc3_b");
+                // }
+
+
+                // update_net_->AddReluOp("fc3", "fc3");
+
+                
+                // update_net_->AddFcOp("fc3", "pred_w", "pred_b", "pred");
+                // update_net_->AddInput("pred_w");
+                // update_net_->AddInput("pred_b");
 
 
 
 
 
-                predict_net_->AddReluOp("fc3", "fc3");
-                predict_net_->AddFcOp("fc3", "pred_w", "pred_b", "pred");
-                predict_net_->AddInput("pred_w");
-                predict_net_->AddInput("pred_b");
+                // predict_net_->AddReluOp("fc3", "fc3");
+                // predict_net_->AddFcOp("fc3", "pred_w", "pred_b", "pred");
+                // predict_net_->AddInput("pred_w");
+                // predict_net_->AddInput("pred_b");
 
 
 
-                if (training_) {
-                    init_net_->AddXavierFillOp({output_dim_, 500}, "pred_w");
-                    init_net_->AddConstantFillOp({output_dim_}, "pred_b");
-                }
+                // if (training_) {
+                //     init_net_->AddXavierFillOp({output_dim_, 500}, "pred_w");
+                //     init_net_->AddConstantFillOp({output_dim_}, "pred_b");
+                // }
 
-                update_net_->AddSoftmaxOp("pred", "softmax");
-                predict_net_->AddSoftmaxOp("pred", "softmax");
-
-
+                // update_net_->AddSoftmaxOp("pred", "softmax");
+                // predict_net_->AddSoftmaxOp("pred", "softmax");
 
 
-                LOG(INFO)<<predict_model_.external_input().size();
-                for(auto x: predict_model_.external_input()){
-                    LOG(INFO)<<x;
-                }
-                LOG(INFO)<<init_model_.external_input().size();
-                for(auto x: init_model_.external_input()){
-                    LOG(INFO)<<x;
-                }
+
+
+                // LOG(INFO)<<predict_model_.external_input().size();
+                // for(auto x: predict_model_.external_input()){
+                //     LOG(INFO)<<x;
+                // }
+                // LOG(INFO)<<init_model_.external_input().size();
+                // for(auto x: init_model_.external_input()){
+                //     LOG(INFO)<<x;
+                // }
                 //for(auto op: init_model_.op()){
                 //    LOG(INFO)<<op.type()<<" "<<op.name();
                 //}
@@ -491,6 +565,7 @@ namespace kurff{
             std::map<string, vector<int> > outputs_;
             std::map<string, vector<int> > labels_;
             bool training_;
+            bool use_gpu_;
 
     };
 

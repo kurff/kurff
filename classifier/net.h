@@ -3,7 +3,7 @@
 
 #include "caffe2/core/operator.h"
 
-namespace Beta {
+namespace kurff {
 using namespace caffe2;
 class Net {
  public:

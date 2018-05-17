@@ -6,6 +6,7 @@
 #include "core/box.hpp"
 #include "opencv2/opencv.hpp"
 #include "core/registry.h"
+#include "caffe2/context.h"
 using namespace std;
 using namespace cv;
 
@@ -31,8 +32,10 @@ namespace kurff{
 
     };
 
-    CAFFE_DECLARE_REGISTRY(RegressionRegistry, Regression);
-    CAFFE_DEFINE_REGISTRY(RegressionRegistry, Regression);
+    CAFFE_DECLARE_REGISTRY(RegressionRegistry, Regression<CPUContext>);
+    CAFFE_DEFINE_REGISTRY(RegressionRegistry, Regression<CPUContext>);
+
+
 
     template<typename DataContext>
     class CNNRegression : public Regression<DataContext>{
@@ -63,6 +66,7 @@ namespace kurff{
         protected:
 
     };
+    CAFFE_REGISTER_CLASS(RegressionRegistry, CNNRegression<CPUContext>, CNNRegression<CPUContext>);
 
 
 

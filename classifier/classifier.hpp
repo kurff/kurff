@@ -74,9 +74,6 @@ namespace kurff{
                 network_->save("classifier");
                 network_->allocate();
                 network_->init_parameters();
-
-                
-
                 return true;
             }
 

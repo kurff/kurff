@@ -52,7 +52,7 @@ namespace kurff{
             }
 
             void allocate_inputs(){
-
+                
                 for(auto in : inputs_ ){
                     Blob* data = workspace_->CreateBlob(in.first);
                     T* input = data->GetMutable<T>();

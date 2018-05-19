@@ -3,6 +3,6 @@ using namespace kurff;
 int main(){
     
     std::shared_ptr<Classifier<CPUContext> > classifier = ClassifierRegistry()->Create("CNNClassifier<CPUContext>");
-    classifier->build();
+    classifier->build_from_database();
     return 0;
 }

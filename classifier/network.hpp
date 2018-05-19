@@ -25,9 +25,15 @@ namespace kurff{
                 // labels_.insert(labels.begin(), labels.end());
 
             }
+            Network(int batch_size, int num_output, bool training = true):batch_size_(batch_size), num_output_(num_output), training_(training){
+                
+
+            }
+
             Network(){
 
             }
+
             ~Network(){
 
 
@@ -52,7 +58,6 @@ namespace kurff{
             }
 
             void allocate_inputs(){
-                
                 for(auto in : inputs_ ){
                     Blob* data = workspace_->CreateBlob(in.first);
                     T* input = data->GetMutable<T>();
@@ -68,8 +73,14 @@ namespace kurff{
                 }
             }
 
+
+
+
+
+
             void allocate(){
                 init_ = CreateNet( init_model_,workspace_.get());
+                init_->Run();
                 LOG(INFO)<<"create init network finish";
                 predict_ = CreateNet(predict_model_, workspace_.get());
                 LOG(INFO)<<"create predict network finish";
@@ -102,10 +113,16 @@ namespace kurff{
                 create_head_classifier(middle,output->first, output->second[0]);
                 LOG(INFO)<<"create head classifier";
                 create_classification_loss("class", "label");
-                
+            }
 
-
-
+            void create_network_classifier_from_db(){
+                LOG(INFO)<<"create network from db";
+                add_database("train-lmdb","lmdb", batch_size_);
+                string middle;
+                create_base_network("data", middle);
+                create_head_classifier(middle,"class", num_output_);
+                LOG(INFO)<<"create head classifier";
+                create_classification_loss("class", "label"); 
 
 
             }
@@ -220,7 +237,16 @@ namespace kurff{
                     update_net_->AddInput(in.first);
                     predict_net_->AddInput(in.first);
                 }
+            }
 
+            void add_database(const string db, const string & db_type, int batch_size){
+                init_net_->AddCreateDbOp("dbreader", db_type, db);
+                //predict_net_->AddInput("dbreader");
+                update_net_->AddInput("dbreader");
+                update_net_->AddTensorProtosDbInputOp("dbreader", "data_uint8", "label", batch_size);
+                update_net_->AddCastOp("data_uint8", "data", TensorProto_DataType_FLOAT);
+                update_net_->AddScaleOp("data", "data", 1.f/255);
+                update_net_->AddStopGradientOp("data");
             }
 
             void add_label_data(){
@@ -565,6 +591,9 @@ namespace kurff{
             std::map<string, vector<int> > inputs_;
             std::map<string, vector<int> > outputs_;
             std::map<string, vector<int> > labels_;
+
+            int batch_size_;
+            int num_output_;
             bool training_;
             bool use_gpu_;
 

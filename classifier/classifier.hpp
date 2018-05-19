@@ -27,7 +27,9 @@ namespace kurff{
         public:
             virtual bool initial(string model_def, string model) = 0;
 
-            virtual bool build() = 0;
+            virtual bool build(bool training = true) = 0;
+
+            virtual bool build_from_database(bool training = true) = 0;
 
             virtual void classify(const Mat& input, vector<Box>& boxes) = 0;
 
@@ -58,12 +60,11 @@ namespace kurff{
                 return true;
             }
 
-            bool build(){
+            bool build(bool training = true){
                 int number_class = map_int2string.size();
                 std::map<string, vector<int> > inputs{{"data",{32,64,64,3}}};
                 std::map<string, vector<int> > outputs{{"class",{number_class}}};
                 std::map<string, vector<int> > labels{{"label",{number_class}}};
-                bool training = true;
                 network_.reset(new Network<DataContext>(inputs, outputs, labels, training));
                 caffe2::NetDef init_model;
                 caffe2::NetDef predict_model;
@@ -73,8 +74,23 @@ namespace kurff{
                 network_->create_network();
                 network_->save("classifier");
                 network_->allocate();
-                network_->init_parameters();
+                //network_->init_parameters();
                 return true;
+            }
+
+            bool build_from_database(bool training = true){
+                int number_class = map_int2string.size();
+                network_.reset(new Network<DataContext>(16, number_class));
+                caffe2::NetDef init_model;
+                caffe2::NetDef predict_model;
+                caffe2::NetDef update_model;
+                network_->init(init_model, predict_model, update_model);
+                network_->create_network_classifier_from_db();
+                network_->save("classifier");
+                network_->allocate();
+                //network_->init_parameters();
+                return true;
+
             }
 
             void classify(const Mat& input, vector<Box>& boxes){

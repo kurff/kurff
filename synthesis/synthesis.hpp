@@ -69,7 +69,7 @@ namespace kurff{
                         run_transform(image, output);
                         cv::imshow("src", output);
                         cv::imwrite(folder+"/"+std::to_string(count_)+".png", output);
-                        f << std::to_string(count_)+".png"<<" "<<character.second<<std::endl;
+                        f << std::to_string(count_)+".png"<<" "<<character.first<<std::endl;
 
                         //visualize_keypoints(image, keypoints);
                         cv::waitKey(1);

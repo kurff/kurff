@@ -33,7 +33,7 @@ namespace kurff{
 
             virtual void classify(const Mat& input, vector<Box>& boxes) = 0;
 
-
+            virtual void update() = 0;
          
 
     };
@@ -92,6 +92,12 @@ namespace kurff{
                 return true;
 
             }
+
+            void update(){
+                network_->update_parameters();
+
+            }
+
 
             void classify(const Mat& input, vector<Box>& boxes){
 

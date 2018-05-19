@@ -81,11 +81,20 @@ namespace kurff{
             void allocate(){
                 init_ = CreateNet( init_model_,workspace_.get());
                 init_->Run();
+                for(auto blob : workspace_->Blobs()){
+                    LOG(INFO)<<"intial blob: "<< blob;
+                }
+
                 LOG(INFO)<<"create init network finish";
-                predict_ = CreateNet(predict_model_, workspace_.get());
-                LOG(INFO)<<"create predict network finish";
                 update_ = CreateNet(update_model_, workspace_.get());
                 LOG(INFO)<<"create update network finish";
+                for(auto blob : workspace_->Blobs()){
+                    LOG(INFO)<<"update blob: "<< blob;
+                }
+
+                predict_ = CreateNet(predict_model_, workspace_.get());
+                LOG(INFO)<<"create predict network finish";
+                
             }
 
             void create_network(){
@@ -247,6 +256,14 @@ namespace kurff{
                 update_net_->AddCastOp("data_uint8", "data", TensorProto_DataType_FLOAT);
                 update_net_->AddScaleOp("data", "data", 1.f/255);
                 update_net_->AddStopGradientOp("data");
+
+                predict_net_->AddInput("dbreader");
+                predict_net_->AddTensorProtosDbInputOp("dbreader", "data_uint8", "label", batch_size);
+                predict_net_->AddCastOp("data_uint8", "data", TensorProto_DataType_FLOAT);
+                predict_net_->AddScaleOp("data", "data", 1.f/255);
+                predict_net_->AddStopGradientOp("data");
+
+
             }
 
             void add_label_data(){

@@ -312,7 +312,7 @@ namespace kurff{
                 params_.clear();
                 for(auto op : init_model_.op()){
                     for(auto out: op.output()){
-                        if(!(out.compare("ITER")==0 || out.compare("ONE")==0)){
+                        if(!(out.compare("ITER")==0 || out.compare("ONE")==0 || out.compare("dbreader") ==0)){
                             params_.push_back(out);
                         }
                     }
@@ -368,7 +368,7 @@ namespace kurff{
                 params_.clear();
                 for(auto op : init_model_.op()){
                     for(auto out: op.output()){
-                        if(!(out.compare("ITER")==0 || out.compare("ONE")==0)){
+                        if(!(out.compare("ITER")==0 || out.compare("ONE")==0|| out.compare("dbreader") ==0)){
                             params_.push_back(out);
                         }
                     }
@@ -501,7 +501,8 @@ namespace kurff{
                 params_.clear();
                 for(auto op : init_model_.op()){
                     for(auto out: op.output()){
-                        if(!(out.compare("ITER")==0 || out.compare("ONE")==0)){
+                        if(!(out.compare("ITER")==0 || out.compare("ONE")==0
+                        || out.compare("dbreader") ==0)){
                             params_.push_back(out);
                         }
                     }

@@ -102,11 +102,12 @@ namespace kurff{
                 create_head_classifier(middle,output->first, output->second[0]);
                 LOG(INFO)<<"create head classifier";
                 create_classification_loss("class", "label");
-
-
-
                 
-                
+
+
+
+
+
             }
 
             void add_convolutional_block(const string inputs, 

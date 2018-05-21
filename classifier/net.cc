@@ -309,7 +309,7 @@ OperatorDef* Net::AddConvOp(const std::string& input, const std::string& w,
   net_add_arg(*op, "stride", stride);
   net_add_arg(*op, "pad", padding);
   net_add_arg(*op, "kernel", kernel);
-  net_add_arg(*op, "order", "NCHW");
+  net_add_arg(*op, "order", "NHWC");
   return op;
 }
 

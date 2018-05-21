@@ -25,7 +25,8 @@ namespace kurff{
                 // labels_.insert(labels.begin(), labels.end());
 
             }
-            Network(int batch_size, int num_output, bool training = true):batch_size_(batch_size), num_output_(num_output), training_(training){
+            Network(int batch_size, int num_output, bool training = true, bool use_gpu = false):batch_size_(batch_size), num_output_(num_output), 
+            training_(training), use_gpu_(use_gpu){
                 
 
             }
@@ -153,8 +154,8 @@ namespace kurff{
                 update_net_->AddReluOp(m,m);
                 predict_net_->AddReluOp(m,m);
                 if(pooling){
-                    update_net_->AddMaxPoolOp(m,o,2,0,2);
-                    predict_net_->AddMaxPoolOp(m,o,2,0,2);
+                    update_net_->AddMaxPoolOp(m,o,2,1,2,"NHWC");
+                    predict_net_->AddMaxPoolOp(m,o,2,1,2,"NHWC");
                     outputs = o;
                 }else{
                     outputs = m;
@@ -278,10 +279,12 @@ namespace kurff{
                 string output_block1;
                 string output_block2;
                 string output_block3;
+                string output_block4;
                 add_convolutional_block(input, output_block1,{32,3,3,3},0,true);
-                add_convolutional_block(output_block1, output_block2,{32,32,3,3},1, true);
-                add_convolutional_block(output_block2, output_block3,{32,32,3,3},2, true);
-                add_convolutional_block(output_block3, output,{32,32,3,3},3,true);
+                add_convolutional_block(output_block1, output_block2,{32,3,3, 32},1, true);
+                add_convolutional_block(output_block2, output_block3,{32,3, 3, 32},2, true);
+                add_convolutional_block(output_block3, output_block4,{32,3,3, 32},3,true);
+                add_convolutional_block(output_block4, output,{32,3,3, 32},4,true);
                 //vector<string> fc_block1;
                 //vector<string> fc_block2;
                 //add_fc_block(output_block3,fc_block1,{100,},1,0,1);
@@ -321,7 +324,7 @@ namespace kurff{
                 }
                 update_net_->AddInput("ONE");
                 update_net_->AddIterOp("ITER");
-                update_net_->AddLearningRateOp("ITER", "LR", 0.1);
+                update_net_->AddLearningRateOp("ITER", "LR", 0.01);
                 LOG(INFO)<<"add input and iter";
             }
 
@@ -380,7 +383,7 @@ namespace kurff{
                 LOG(INFO)<<"AddConstantFillWithOp";
                 update_net_->AddGradientOps();
                 LOG(INFO)<<"AddGradientOps";
-                update_net_->AddLearningRateOp("ITER", "LR", 0.1);
+                update_net_->AddLearningRateOp("ITER", "LR", 0.001);
                 LOG(INFO)<<"add params";
                 params_.clear();
                 for(auto op : init_model_.op()){
@@ -513,7 +516,7 @@ namespace kurff{
                 update_net_->AddAveragedLossOp("xent","loss");
                 update_net_->AddConstantFillWithOp(1.f, "loss", "loss_grad");
                 update_net_->AddGradientOps();
-                update_net_->AddLearningRateOp("ITER", "LR", 0.1);
+                update_net_->AddLearningRateOp("ITER", "LR", 0.001);
 
                 params_.clear();
                 for(auto op : init_model_.op()){
@@ -555,6 +558,17 @@ namespace kurff{
 
             }
 
+            float loss(){
+                Blob* loss = workspace_->GetBlob("loss");
+                TensorCPU* l = loss->GetMutable<TensorCPU>();
+                return *(l->data<float>());
+            }
+
+            float fetch(string name){
+                Blob* blob = workspace_->GetBlob(name);
+                TensorCPU* b = blob->GetMutable<TensorCPU>();
+                return *(b->data<float>());
+            }
             
 
             void train(){

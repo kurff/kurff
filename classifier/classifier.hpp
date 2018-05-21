@@ -34,6 +34,8 @@ namespace kurff{
             virtual void classify(const Mat& input, vector<Box>& boxes) = 0;
 
             virtual void update() = 0;
+
+            virtual float fetch(string name) = 0;
          
 
     };
@@ -95,7 +97,10 @@ namespace kurff{
 
             void update(){
                 network_->update_parameters();
+            }
 
+            float fetch(string name){
+                network_->fetch(name);
             }
 
 

@@ -17,22 +17,24 @@ namespace kurff{
 
         public:
             Network(const std::map<string, vector<int> >& inputs, const std::map<string, vector<int> >& outputs
-            , const std::map<string , vector<int> > labels, bool training, bool use_gpu = false )
-            : training_(training), inputs_(inputs), outputs_(outputs), labels_(labels), use_gpu_(use_gpu){
+            , const std::map<string , vector<int> > labels, bool training, bool is_predict = false, bool use_gpu = false )
+            : training_(training), inputs_(inputs), outputs_(outputs), labels_(labels), use_gpu_(use_gpu)
+            , is_predict_(is_predict){
                 LOG(INFO)<<"create network";
                 // inputs_.insert(inputs.begin(), inputs.end());
                 // outputs_.insert(outputs.begin(), outputs.end());
                 // labels_.insert(labels.begin(), labels.end());
-
+                workspace_.reset(new Workspace("workspace"));
             }
-            Network(int batch_size, int num_output, bool training = true, bool use_gpu = false):batch_size_(batch_size), num_output_(num_output), 
-            training_(training), use_gpu_(use_gpu){
-                
-
+            Network(int batch_size, int num_output, bool training = true, bool is_predict = false, bool use_gpu = false):batch_size_(batch_size), num_output_(num_output), 
+            training_(training), use_gpu_(use_gpu), is_predict_(is_predict){
+                LOG(INFO)<<"create workspace";
+                workspace_.reset(new Workspace("workspace"));
             }
 
             Network(){
-
+                LOG(INFO)<<"create workspace";
+                workspace_.reset(new Workspace("workspace"));
             }
 
             ~Network(){
@@ -54,7 +56,7 @@ namespace kurff{
                     predict_net_->SetDeviceCUDA();
                     update_net_->SetDeviceCUDA();
                 }
-                workspace_.reset(new Workspace("workspace"));
+                
                 // create input data
             }
 
@@ -133,7 +135,9 @@ namespace kurff{
                 create_head_classifier(middle,"class", num_output_);
                 LOG(INFO)<<"create head classifier";
                 create_classification_loss("class", "label"); 
+            }
 
+            void create_evaluate_classifier(){
 
             }
 
@@ -147,10 +151,13 @@ namespace kurff{
                 LOG(INFO)<<"size of inputs is 1";
                 update_net_->AddConvOp(inputs,w,b,m,1,0,shapes[2]);
                 predict_net_->AddConvOp(inputs,w,b,m,1,0,shapes[2]);
+
                 update_net_->AddInput(w);
                 update_net_->AddInput(b);
+
                 predict_net_->AddInput(w);
                 predict_net_->AddInput(b);
+
                 update_net_->AddReluOp(m,m);
                 predict_net_->AddReluOp(m,m);
                 if(pooling){
@@ -249,6 +256,15 @@ namespace kurff{
                 }
             }
 
+
+            void add_evaluate_input(){
+                predict_net_->AddInput("data_uint8");
+                predict_net_->AddCastOp("data_uint8", "data", TensorProto_DataType_FLOAT);
+                predict_net_->AddScaleOp("data", "data", 1.f/255);
+                predict_net_->AddStopGradientOp("data");
+
+            }
+
             void add_database(const string db, const string & db_type, int batch_size){
                 init_net_->AddCreateDbOp("dbreader", db_type, db);
                 //predict_net_->AddInput("dbreader");
@@ -258,11 +274,7 @@ namespace kurff{
                 update_net_->AddScaleOp("data", "data", 1.f/255);
                 update_net_->AddStopGradientOp("data");
 
-                predict_net_->AddInput("dbreader");
-                predict_net_->AddTensorProtosDbInputOp("dbreader", "data_uint8", "label", batch_size);
-                predict_net_->AddCastOp("data_uint8", "data", TensorProto_DataType_FLOAT);
-                predict_net_->AddScaleOp("data", "data", 1.f/255);
-                predict_net_->AddStopGradientOp("data");
+                add_evaluate_input();
 
 
             }
@@ -555,7 +567,7 @@ namespace kurff{
 
             }
             void forward(){
-
+                predict_->Run();
             }
 
             float loss(){
@@ -578,7 +590,7 @@ namespace kurff{
 
 
             void save_model(string init_pb){
-                auto op = init_net_->AddSaveOp(params_,1,"minidb",init_pb,"minidb",{});
+                auto op = predict_net_->AddSaveOp(params_,1,"minidb",init_pb,"minidb",{});
                 workspace_->RunOperatorOnce(*op);
                 //for(auto x: params_){
                 //    auto b = workspace_->GetBlob(x);
@@ -589,7 +601,7 @@ namespace kurff{
             }
 
             void load_model(string init_pb){
-                auto op = init_net_->AddLoadOp(params_,1,"",{},init_pb,{},"minidb",1,1,1,{});
+                auto op = predict_net_->AddLoadOp(params_,1,"",{},init_pb,{},"minidb",1,1,1,{});
                 workspace_->RunOperatorOnce(*op);
                 
                 //for(auto x : ws.Blobs()){
@@ -604,6 +616,32 @@ namespace kurff{
                 WriteProtoToTextFile(predict_model_,proto_name+"_pred.pbtxt");
                 WriteProtoToTextFile(init_model_, proto_name+"_init.pbtxt");
                 WriteProtoToTextFile(update_model_, proto_name+"_update.pbtxt");
+            }
+
+            void load_predict(string proto_name, string model){
+                ReadProtoFromTextFile(proto_name+"_pred.pbtxt",&predict_model_);
+                
+                predict_net_.reset(new Net(predict_model_));
+                Blob* data = workspace_->CreateBlob("data_uint8");
+                TensorCPU* t = data->GetMutable<TensorCPU>();
+                t->Resize(vector<TIndex>{1,64,64,3});
+                uchar* d = t->mutable_data<uchar>();
+                load_model(model);
+                predict_ = CreateNet(predict_model_, workspace_.get());
+                
+            }
+
+
+
+
+            void load_init(string proto_name){
+                ReadProtoFromTextFile( proto_name +"_init.pbtxt",&init_model_);
+                //init_net_.reset(new Net(init_model_));
+            }
+
+            void load_update(string proto_name){
+                ReadProtoFromTextFile(proto_name+"_update.pbtxt", &update_model_);
+               // update_net_.reset(new Net(update_model_)); 
             }
 
         protected:
@@ -627,6 +665,7 @@ namespace kurff{
             int batch_size_;
             int num_output_;
             bool training_;
+            bool is_predict_;
             bool use_gpu_;
 
     };

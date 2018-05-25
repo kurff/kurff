@@ -36,6 +36,14 @@ namespace kurff{
             virtual void update() = 0;
 
             virtual float fetch(string name) = 0;
+
+            virtual void load_model(string name) = 0;
+
+            virtual void save_model(string name) = 0;
+
+            virtual void load_network(string proto, string model) = 0;
+
+            virtual void forward() = 0;
          
 
     };
@@ -49,6 +57,7 @@ namespace kurff{
         public:
             CNNClassifier(): Classifier<DataContext>(){
 
+
             }
             ~CNNClassifier(){
 
@@ -57,7 +66,7 @@ namespace kurff{
 
             bool initial(string model_def, string model){
 
-                network_.reset(new Network<DataContext>());
+                
 
                 return true;
             }
@@ -92,8 +101,9 @@ namespace kurff{
                 network_->allocate();
                 //network_->init_parameters();
                 return true;
-
             }
+
+
 
             void update(){
                 network_->update_parameters();
@@ -107,6 +117,21 @@ namespace kurff{
             void classify(const Mat& input, vector<Box>& boxes){
 
                 
+            }
+
+            void forward(){
+                network_->forward();
+            }
+
+            void load_model(string name){
+                network_->load_model(name);
+            }
+            void save_model(string name){
+                network_->save_model(name);
+            }
+            void load_network(string proto, string model){
+                network_.reset(new Network<DataContext>());
+                network_->load_predict(proto, model);
             }
         protected:
             std::shared_ptr<Network<DataContext> > network_;

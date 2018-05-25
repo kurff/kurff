@@ -13,6 +13,8 @@ add_library(fast SHARED proposals/fast/fast_9.cpp proposals/fast/fast_10.cpp pro
 add_executable(test_mser test/test_mser.cpp proposals/mser/mser.cpp utils/colors.cpp)
 target_link_libraries(test_mser opencv_core opencv_highgui opencv_imgproc glog opencv_features2d fast )#opencv_imgcodecs
 
+add_subdirectory(3rdparty)
+
 add_executable(main main.cpp proto/kurff.pb.cc)
 target_link_libraries(main protobuf glog)
 

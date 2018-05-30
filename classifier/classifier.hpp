@@ -44,6 +44,8 @@ namespace kurff{
             virtual void load_network(string proto, string model) = 0;
 
             virtual void forward() = 0;
+
+            virtual void print_shape() = 0;
          
 
     };
@@ -99,6 +101,7 @@ namespace kurff{
                 network_->create_network_classifier_from_db();
                 network_->save("classifier");
                 network_->allocate();
+                LOG(INFO)<<"allocate success";
                 //network_->init_parameters();
                 return true;
             }
@@ -113,6 +116,10 @@ namespace kurff{
                 network_->fetch(name);
             }
 
+            void print_shape(){
+                network_->print_shape();
+            }
+
 
             void classify(const Mat& input, vector<Box>& boxes){
 
@@ -121,6 +128,7 @@ namespace kurff{
 
             void forward(){
                 network_->forward();
+                
             }
 
             void load_model(string name){

@@ -12,7 +12,7 @@ void run(){
     net->AddCreateDbOp("dbreader", "lmdb", "train-lmdb");
                 //predict_net_->AddInput("dbreader");
     net->AddInput("dbreader");
-    net->AddTensorProtosDbInputOp("dbreader", "data_uint8", "label", 64);
+    net->AddTensorProtosDbInputOp("dbreader", "data_uint8", "label", 16);
     net->AddCastOp("data_uint8", "data", TensorProto_DataType_FLOAT);
     net->AddScaleOp("data", "data", 1.f/255);
     net->AddStopGradientOp("data");
@@ -31,6 +31,7 @@ void evaluate(){
     std::shared_ptr<Classifier<CPUContext> > classifier = ClassifierRegistry()->Create("CNNClassifier<CPUContext>");
     classifier->load_network("classifier", "cnn");
     classifier->forward();
+    
 }
 
 
@@ -39,11 +40,13 @@ int main(){
 
     // std::shared_ptr<Classifier<CPUContext> > classifier = ClassifierRegistry()->Create("CNNClassifier<CPUContext>");
     // classifier->build_from_database();
-    // for(int i = 0; i < 1000 ; ++ i){
+    // for(int i = 0; i < 2000 ; ++ i){
     //     classifier->update();
+    //     //classifier->print_shape();
     //     LOG(INFO)<<"iter: "<< i <<" loss: " << classifier->fetch("loss")<<" rate: "<<classifier->fetch("LR");
     // }
-    // classifier->save_model("cnn");
+    
+    //classifier->save_model("cnn");
     evaluate();
     return 0;
 }

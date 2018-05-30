@@ -295,8 +295,8 @@ namespace kurff{
                 add_convolutional_block(input, output_block1,{32,3,3,3},0,true);
                 add_convolutional_block(output_block1, output_block2,{32,3,3, 32},1, true);
                 add_convolutional_block(output_block2, output_block3,{32,3, 3, 32},2, true);
-                add_convolutional_block(output_block3, output_block4,{32,3,3, 32},3,true);
-                add_convolutional_block(output_block4, output,{32,3,3, 32},4,true);
+                add_convolutional_block(output_block3, output,{32,3,3, 32},3,true);
+                //add_convolutional_block(output_block4, output,{32,3,3, 32},4,true);
                 //vector<string> fc_block1;
                 //vector<string> fc_block2;
                 //add_fc_block(output_block3,fc_block1,{100,},1,0,1);
@@ -305,7 +305,7 @@ namespace kurff{
 
             void create_head_classifier(const string input, const string output, int num_output){
                 string middle;
-                add_fc_block(input,middle,{100,8*8*32},0);
+                add_fc_block(input,middle,{100,4*4*32},0);
                 add_fc_block_with_output(middle, output, {num_output,100} ,1 ,0,1,0);
             }
             
@@ -623,10 +623,15 @@ namespace kurff{
                 
                 predict_net_.reset(new Net(predict_model_));
                 Blob* data = workspace_->CreateBlob("data_uint8");
+                //for(int i = 0; i < )
+
                 TensorCPU* t = data->GetMutable<TensorCPU>();
-                t->Resize(vector<TIndex>{1,64,64,3});
+                t->Resize(vector<TIndex>{16,64,64,3});
                 uchar* d = t->mutable_data<uchar>();
                 load_model(model);
+                for(auto blob : workspace_->Blobs()){
+                    LOG(INFO)<<blob <<" "<<workspace_->GetBlob(blob)->Get<TensorCPU>().DebugString();
+                }
                 predict_ = CreateNet(predict_model_, workspace_.get());
                 
             }

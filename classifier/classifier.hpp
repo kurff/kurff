@@ -116,6 +116,8 @@ namespace kurff{
                 network_->fetch(name);
             }
 
+            
+
             void print_shape(){
                 network_->print_shape();
             }

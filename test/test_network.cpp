@@ -25,6 +25,8 @@ void run(){
     TensorPrinter x;
     x.Print<float>(*(d->GetMutable<TensorCPU>()));
 
+    
+
 }
 
 void evaluate(){

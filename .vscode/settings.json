@@ -32,6 +32,7 @@
         "utility": "cpp",
         "array": "cpp",
         "vector": "cpp",
-        "condition_variable": "cpp"
+        "condition_variable": "cpp",
+        "*.ipp": "cpp"
     }
 }

@@ -33,7 +33,7 @@ class Box: public cv::Rect{
             width = box.width;
             
         }
-    protected:
+    public:
         vector<Top> top_pred_;
         vector<int> label_;
         vector<string> label_name_;

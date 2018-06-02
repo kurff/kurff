@@ -3,6 +3,7 @@
 #include "opencv2/opencv.hpp"
 using namespace cv;
 #include "glog/logging.h"
+#include "data/annotation.hpp"
 #include<string>
 #include <vector>
 using namespace std;
@@ -18,6 +19,19 @@ void visualize(Mat& img, const vector<Box>& boxes, Scalar scalar){
         rectangle(img, box, scalar,3);
     }
 }
+
+template<typename Box>
+void visualize(Mat& img, const vector<vector<Box> >& boxes, Scalar scalar ){
+    LOG(INFO)<<"draw "<< boxes.size() <<" boxes";
+    for(auto box : boxes){
+        for(auto b : box){
+            rectangle(img, b, scalar, 3);
+        }
+    }
+}
+
+
+
 
 
 

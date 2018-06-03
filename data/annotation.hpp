@@ -18,7 +18,8 @@ namespace kurff{
 
             }
 
-            virtual void load(string file_name) = 0;
+            virtual void load(string file_name, vector<vector<Box> >& boxes) = 0;
+
         protected:
 
             
@@ -42,7 +43,7 @@ namespace kurff{
 
             }
 
-            void load(string file_name){
+            void load(string file_name, vector<vector<Box> >& boxes_all){
                 ifstream fc(file_name, ios::in);
                 if(!fc.is_open()){
                     LOG(INFO) <<"can not open anotation file"<< file_name;
@@ -50,7 +51,7 @@ namespace kurff{
                 }
 
                 string text_content;
-                boxes_all_.clear();
+                boxes_all.clear();
                 vector<Box> boxes;
                 Box box;
                 int x1 = 0, y1 = 0;
@@ -58,7 +59,7 @@ namespace kurff{
                     vector<string> names;
                     SplitString(text_content, names, " ");
                     if(names.size()<=1){
-                        boxes_all_.push_back(boxes);
+                        boxes_all.push_back(boxes);
                         boxes.clear();
                     }else{
                         stringstream ss;
@@ -80,14 +81,14 @@ namespace kurff{
                         boxes.push_back(box);
                     }
                 }
-                boxes_all_.push_back(boxes);
+                boxes_all.push_back(boxes);
                 fc.close();
             }
 
 
 
         protected:
-            vector<vector<Box> > boxes_all_; 
+            
     };
 
     CAFFE_REGISTER_CLASS(AnnotationRegistry, ICDAR2013Annotation, ICDAR2013Annotation);

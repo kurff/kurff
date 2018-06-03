@@ -1,35 +1,69 @@
 #ifndef __KURFF_UTILS_HPP_
 #define __KURFF_UTILS_HPP_
 #include "core/box.hpp"
-
+#include "glog/logging.h"
 namespace kurff{
 
 float overlap(const Box& b0, const Box& b1){
-    if(b0.y0_ > b1.y1_){
+    int b0_x0 = b0.x;
+    int b0_y0 = b0.y;
+    int b0_x1 = b0.x + b0.width;
+    int b0_y1 = b0.y + b0.height;
+
+    int b1_x0 = b1.x;
+    int b1_y0 = b1.y;
+    int b1_x1 = b1.x + b1.width;
+    int b1_y1 = b1.y + b1.height;
+
+    if(b0_y0 > b1_y1){
         return 0.0f;
     }
-    if(b0.x0_ > b1.x1_){
+    if(b0_x0 > b1_x1){
         return 0.0f;
     }
-    if(b0.y1_ < b1.y0_){
+    if(b0_y1 < b1_y0){
         return 0.0f;
     }
-    if(b0.x1_ < b1.x0_){
+    if(b0_x1 < b1_x0){
         return 0.0f;
     }
 
-    float x = min(b0.x1_,b1.x1_) - max(b0.x0_,b1.x0_);
-    float y = min(b0.y1_,b1.y1_) - max(b0.y0_,b1.y0_);
+    float x = min(b0_x1,b1_x1) - max(b0_x0,b1_x0);
+    float y = min(b0_y1,b1_y1) - max(b0_y0,b1_y0);
     float intersection = x*y;
-    float a0 = (b0.y1_-b0.y0_)*(b0.x1_-b0.x0_);
-    float a1 = (b1.y1_-b1.y0_)*(b1.x1_-b1.x0_);
+    float a0 = (b0_y1-b0_y0)*(b0_x1-b0_x0);
+    float a1 = (b1_y1-b1_y0)*(b1_x1-b1_x0);
     return intersection /(a0+a1-intersection);
 }
 
-
-bool compare(const TextBox& t0, const TextBox& t1){
-    return t0.confidence_ > t1.confidence_;
+void overlap(vector<Box>& proposal, const vector<vector<Box> >& bounding_box, float threshold = 0.5 ){
+    LOG(INFO)<<"before size: "<< proposal.size();
+    for( auto it = proposal.begin(); it != proposal.end();  ){
+        float o = 0.0f;
+        float ov = 0.0f;
+        for(auto box : bounding_box ){
+            for(auto b : box){
+                ov = overlap(*it, b);
+                if( o <= ov ){
+                    o = ov;
+                }
+            }
+        }
+        //LOG(INFO)<<"overlap: "<< o;
+        if(o<=threshold){
+            it = proposal.erase(it);
+        }else{
+            ++ it;
+        }
+    }
+    LOG(INFO)<<"after size: "<< proposal.size();
 }
+
+
+// bool compare(const TextBox& t0, const TextBox& t1){
+//     return t0.confidence_ > t1.confidence_;
+// }
+
 
 
 void SplitString(const std::string& s, std::vector<std::string>& v, const std::string& c)

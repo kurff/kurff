@@ -51,11 +51,11 @@ namespace kurff{
                     const double e1sq = sqrt(e1);
                     const double maxR = std::max(e0sq,e1sq);
                     Box box;
-                    box.x = x - 2*maxR;
-                    box.y = y - 2*maxR;
+                    box.x = std::max(x - 2*maxR,0.0);
+                    box.y = std::max(y - 2*maxR,0.0);
                     box.height = 4*maxR;
                     box.width = 4*maxR;
-                    LOG(INFO)<<box.x<<" "<<box.y<<" "<<box.height<<" "<<box.width;
+                    //LOG(INFO)<<box.x<<" "<<box.y<<" "<<box.height<<" "<<box.width;
                     proposals.push_back(box);
 
                 }

@@ -1,6 +1,7 @@
 #include "proposals/Proposal.hpp"
 #include "proposals/MSERProposal.hpp"
 #include "proposals/FASTProposal.hpp"
+#include "proposals/CannyProposal.hpp"
 #include "utils/visualization.hpp"
 #include "utils/colors.h"
 #include <memory>
@@ -29,5 +30,14 @@ int main(int argc, char* argv[]){
     image.copyTo(vis_fast);
     visualize<Box>(vis_fast, boxes, Colors::Red);
     cv::imwrite("fast_result.jpg",vis_fast);
+
+    vector<Box> canny_boxes;
+    std::shared_ptr<Proposal> canny (ProposalRegistry()->Create("CannyProposal",100));
+    canny->run(image, canny_boxes);
+
+    cv::Mat vis_canny;
+    image.copyTo(vis_canny);
+    visualize<Box>(vis_canny, canny_boxes, Colors::Red);
+    cv::imwrite("canny_result.jpg",vis_canny);
     return 0;
 }

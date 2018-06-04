@@ -4,9 +4,11 @@ add_compile_options(-std=c++11)
 include_directories(./)
 include_directories(/usr/include/freetype2/)
 include_directories(/usr/local/include)
+include_directories(3rdparty/caffe/distribute/include)
+include_directories(/usr/local/cuda/include)
 
-
-
+link_directories(/usr/local/cuda/lib64)
+link_directories(3rdparty/caffe/distribute/lib)
 link_directories(/usr/local/lib)
 link_directories(/usr/lib/x86_64-linux-gnu/)
 add_library(fast SHARED proposals/fast/fast_9.cpp proposals/fast/fast_10.cpp proposals/fast/fast_11.cpp
@@ -33,3 +35,6 @@ target_link_libraries(test_dataset glog opencv_core opencv_highgui opencv_imgpro
 
 add_executable(test_video_canny test/test_video_canny.cpp proposals/mser/mser.cpp utils/colors.cpp)
 target_link_libraries(test_video_canny glog opencv_core opencv_videoio opencv_highgui opencv_imgproc fast opencv_imgcodecs)
+
+add_executable(convert_database utils/convert_database.cpp)
+target_link_libraries(convert_database caffe boost_system boost_filesystem opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc  glog gflags )

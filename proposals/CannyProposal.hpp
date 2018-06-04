@@ -29,7 +29,7 @@ namespace kurff{
                 //imshow("canny", edges);
                 //waitKey(0);
                 proposals.clear();
-                for(int i = 0; i < stats.rows; ++ i){
+                for(int i = 1; i < stats.rows; ++ i){
                     Box box;
                     box.x = stats.at<int>(i,CC_STAT_LEFT ) ;
                     box.y = stats.at<int>(i,CC_STAT_TOP);

@@ -1,0 +1,1 @@
+./3rdparty/caffe/distribute/bin/caffe.bin train --solver=./script/classifier_solver.prototxt

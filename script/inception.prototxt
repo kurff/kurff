@@ -7,13 +7,21 @@ name: "ReID_Net"
 #input_dim:80
 layer {
   name: "data"
-  type: "Python"
+  type: "Data"
   top: "data"
   top: "label"
-  python_param {
-    module: 'reid_layer.data_layer'
-    layer: 'DataLayer'
-    param_str: "{'batch_size':300,     'mean': (104.007,  116.669,  122.679),     'root_folder': 'DATASET_ROOT_DIR',     'source': 'DATASET_TXT_FILENAME',     'mirror': True, 'pad': 0,   'shape': (160, 80)}"
+  data_param{
+    source: "./build/classifier"
+    # type of DB: LEVELDB or LMDB (LMDB supports concurrent reads)
+    backend: LMDB
+    # batch processing improves efficiency.
+    batch_size: 32
+  }
+  transform_param {
+    # feature scaling coefficient: this maps the [0, 255] MNIST data to [0, 1]
+    mean_value: 104
+    mean_value: 117
+    mean_value: 123
   }
   include: { phase: TRAIN }
 }
@@ -1683,3 +1691,35 @@ layer {
 }
 
 
+layer {
+  name: "output"
+  type: "InnerProduct"
+  bottom: "inception_4e/output"
+  top: "output"
+  param {
+    lr_mult: 1.0
+    decay_mult: 1.0
+  }
+  param {
+    lr_mult: 2.0
+    decay_mult: 0.0
+  }
+  inner_product_param {
+    num_output: 62
+    weight_filler {
+      type: "xavier"
+      std: 0.10000000149
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.20000000298
+    }
+  }
+}
+layer {
+  name: "loss"
+  type: "SoftmaxWithLoss"
+  bottom: "output"
+  bottom: "label"
+  top: "loss"
+}

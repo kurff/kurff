@@ -10,7 +10,7 @@ int main(){
 
     Synthesis* synthesis = new Synthesis("fonts.txt");
     synthesis->init(parameters);
-    synthesis->run("file.txt", "./images/" );
+    synthesis->run("file.txt", "./images/" ,10 );
 
 
 }

@@ -55,7 +55,7 @@ namespace kurff{
                 center.x = x + this->random_->Next( center_low_, center_up_ );
                 center.y = y + this->random_->Next( center_low_, center_up_ );
 
-                LOG(INFO)<<"angle: "<< angle<<" scale: "<< scale<<" r"<<r;
+                //LOG(INFO)<<"angle: "<< angle<<" scale: "<< scale<<" r"<<r;
 
 
                 trans_ = getRotationMatrix2D(center, angle, scale );

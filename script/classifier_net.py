@@ -14,6 +14,12 @@ def inception_net(bottom_name='inception_4e/output', num_output = 62):
 
     net=caffe.NetSpec()
     net[bottom_name],net['label']=L.Data(ntop=2)
+    net['output'] = L.InnerProduct(net[bottom_name], num_output=num_output, \
+                                    param = [dict(lr_mult=1, decay_mult=1),  \
+                                             dict(lr_mult=2, decay_mult=0)],
+                                    weight_filler=dict(type="xavier", std=0.1),
+                                    bias_filler=dict(type="constant", value=0.2))
+    net['loss'] = L.SoftmaxWithLoss(net['output'], net['label']);
     proto_str='%s'%net.to_proto()
     return proto_str[proto_str.find('}')+1:]
 def write_file(file_name,proto_str):
@@ -23,7 +29,7 @@ def write_file(file_name,proto_str):
 
 
 if __name__ == '__main__':
-    base_str=base_net("train_val.prototxt");
+    base_str=base_net("train_val.prototxt");    
     last_str=base_str[base_str.rfind('top'):]
     last_str=last_str[last_str.find('\"')+1:]
     print last_str

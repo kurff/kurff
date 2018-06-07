@@ -33,6 +33,12 @@
         "array": "cpp",
         "vector": "cpp",
         "condition_variable": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "cmath": "cpp",
+        "csignal": "cpp",
+        "cstdarg": "cpp",
+        "cwctype": "cpp",
+        "future": "cpp",
+        "codecvt": "cpp"
     }
 }

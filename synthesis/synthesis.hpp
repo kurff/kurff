@@ -54,28 +54,34 @@ namespace kurff{
                 }
             }
 
-            void run(string file, string folder){
+            void run(string file, string folder, int iter){
                 std::ofstream f(file.c_str(), ios::out);
                 vector<Point2f> keypoints;
-                for(int i = 0; i < fonts_.size(); ++i){
-                    for(auto character : map_int2string ){                 
+                
+                for(int it = 0; it < iter; ++ it ){
+                    for(int i = 0; i < fonts_.size(); ++i){
+                        LOG(INFO)<<fonts_type_[i] <<" count "<< count_ <<".png";
+                        for(auto character : map_int2string ){                 
                         //LOG(INFO)<< character.second;
-                        ++ count_;
-                        fonts_[i]->draw(character.second, 0);
-                        Mat image = fonts_[i]->get();
-                        //cv::imshow("src", image);
-                        image.copyTo(mask_);
-                        Mat output;
-                        run_transform(image, output);
-                        cv::imshow("src", output);
-                        cv::imwrite(folder+"/"+std::to_string(count_)+".png", output);
-                        f << std::to_string(count_)+".png"<<" "<<character.first<<std::endl;
+                            ++ count_;
+                            fonts_[i]->draw(character.second, 0);
+                            Mat image = fonts_[i]->get();
+                            //cv::imshow("src", image);
+                            image.copyTo(mask_);
+                            Mat output;
+                            run_transform(image, output);
+                            cv::imshow("src", output);
+                            cv::imwrite(folder+"/"+std::to_string(count_)+".png", output);
+                            f << std::to_string(count_)+".png"<<" "<<character.first<<std::endl;
 
-                        //visualize_keypoints(image, keypoints);
-                        cv::waitKey(1);
+                            //visualize_keypoints(image, keypoints);
+                            cv::waitKey(1);
 
+                        }
                     }
+
                 }
+
                 f.close();
             }
 
@@ -104,6 +110,7 @@ namespace kurff{
             cv::Mat mask_;
             vector<std::shared_ptr<Simulation> > transform_;
             int max_count_;
+            int iter_;
             
     };
 

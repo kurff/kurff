@@ -20,6 +20,7 @@ def inception_net(bottom_name='inception_4e/output', num_output = 62):
                                     weight_filler=dict(type="xavier", std=0.1),
                                     bias_filler=dict(type="constant", value=0.2))
     net['loss'] = L.SoftmaxWithLoss(net['output'], net['label']);
+    net['accuracy'] = L.Accuracy(net['output'], net['label'], include=dict(phase=1));
     proto_str='%s'%net.to_proto()
     return proto_str[proto_str.find('}')+1:]
 def write_file(file_name,proto_str):

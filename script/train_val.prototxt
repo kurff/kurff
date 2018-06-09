@@ -26,7 +26,26 @@ layer {
   include: { phase: TRAIN }
 }
 
-
+layer {
+  name: "data"
+  type: "Data"
+  top: "data"
+  top: "label"
+  data_param{
+    source: "./build/classifier_val"
+    # type of DB: LEVELDB or LMDB (LMDB supports concurrent reads)
+    backend: LMDB
+    # batch processing improves efficiency.
+    batch_size: 32
+  }
+  transform_param {
+    # feature scaling coefficient: this maps the [0, 255] MNIST data to [0, 1]
+    mean_value: 104
+    mean_value: 117
+    mean_value: 123
+  }
+  include: { phase: TEST }
+}
 #######################BVLC_GOOGLE_NET##################################
 layer {
   name: "conv1/7x7_s2"

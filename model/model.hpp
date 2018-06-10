@@ -41,7 +41,7 @@ namespace kurff{
             }
             virtual void run(const Mat& image, vector<T>& objects ) = 0;
 
-            virtual void run_each(const Mat& image, float& confidence, int& label) = 0;
+            virtual void run_each(const Mat& image, vector<float>& confidence, vector<int>& label) = 0;
 
             void WrapInputLayer(std::vector<cv::Mat>* input_channels) {
                 Blob<float>* input_layer = net_->input_blobs()[0];

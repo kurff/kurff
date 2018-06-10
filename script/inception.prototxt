@@ -8,7 +8,7 @@ name: "ReID_Net"
 layer {
   name: "data"
   type: "Data"
-  top: "data"
+  top: ""
   top: "label"
   data_param{
     source: "./build/classifier"

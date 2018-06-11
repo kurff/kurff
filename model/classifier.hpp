@@ -5,10 +5,10 @@
 #include "core/common.hpp"
 #include "core/box.hpp"
 namespace kurff{
-    template<typename T>
-    class Classifier : public Model<T>{
+    //template<typename T>
+    class Classifier : public Model{
         public:
-            Classifier(int top_k) : Model<T>(top_k){
+            Classifier(int top_k) : Model(top_k){
 
             }
             ~Classifier(){
@@ -16,7 +16,8 @@ namespace kurff{
             }
 
 
-            void run(const Mat& image, vector<T>& objects ){
+            //template<typename T>
+            void run(const Mat& image, vector<Box>& objects ){
                 Mat sub;
                 vector<float> confidence;
                 vector<int> label;
@@ -47,7 +48,7 @@ namespace kurff{
                 const float* begin = output_layer->cpu_data();
                 const float* end = begin + output_layer->channels();
                 vector<float> conf(begin, end);
-                vector<size_t> index = sort_index(conf);
+                vector<int> index = sort_index(conf);
 
                 confidence.clear();
                 label.clear();
@@ -63,7 +64,7 @@ namespace kurff{
 
         
     };
-    CAFFE_REGISTER_CLASS(ModelRegistry, Classifier<Box>, Classifier<Box>);
+    CAFFE_REGISTER_CLASS(ModelRegistry, Classifier, Classifier);
 
 
 }

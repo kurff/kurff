@@ -11,10 +11,6 @@ using namespace std;
 using namespace caffe;
 using namespace cv;
 namespace kurff{
-
-    
-
-    template<typename T>
     class Model{
         public:
             Model(int top_k): top_k_(top_k){
@@ -30,9 +26,9 @@ namespace kurff{
                 }else{
                     Caffe::set_mode(Caffe::CPU);
                 }
-
+                
                 net_.reset(new Net<float>(proto, TEST));
-                LOG(INFO)<<"-----------------------------------------";
+                //LOG(INFO)<<"-----------------------------------------";
                 net_->CopyTrainedLayersFrom(weight_file);
                 
                 Blob<float>* input_layer = net_->input_blobs()[0];
@@ -41,10 +37,12 @@ namespace kurff{
                 input_geometry_ = cv::Size(input_layer->width(), input_layer->height());
                 
                 SetMean();
-
+                
 
             }
-            virtual void run(const Mat& image, vector<T>& objects ) = 0;
+
+            //template<typename T>
+            virtual void run(const Mat& image, vector<Box>& objects ) = 0;
 
             virtual void run_each(const Mat& image, vector<float>& confidence, vector<int>& label) = 0;
 
@@ -112,8 +110,8 @@ namespace kurff{
             int top_k_;
 
     };
-    CAFFE_DECLARE_REGISTRY(ModelRegistry, Model<Box>, int);
-    CAFFE_DEFINE_REGISTRY(ModelRegistry, Model<Box>, int);
+    CAFFE_DECLARE_REGISTRY(ModelRegistry, Model, int);
+    CAFFE_DEFINE_REGISTRY(ModelRegistry, Model, int);
 
 
 }

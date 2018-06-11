@@ -89,14 +89,14 @@ struct compare_indirect_index
 {
     const Container& container;
     compare_indirect_index( const Container& container ): container( container ) { }
-    bool operator () ( size_t lindex, size_t rindex ) const
+    bool operator () ( int lindex, int rindex ) const
     {
-        return container[ lindex ] < container[ rindex ];
+        return container[ lindex ] > container[ rindex ];
     }
 };
 
-vector<size_t> sort_index(const vector<float>& confidence){
-    vector <size_t> indices( confidence.size(), 0 );
+vector<int> sort_index(const vector<float>& confidence){
+    vector <int> indices( confidence.size(), 0 );
     iota( indices.begin(), indices.end(), 0 );  // found in <numeric>
     sort( indices.begin(), indices.end(), compare_indirect_index <decltype(confidence)> ( confidence ) );
     return indices;

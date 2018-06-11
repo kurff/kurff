@@ -8,7 +8,7 @@ name: "ReID_Net"
 layer {
   name: "data"
   type: "Data"
-  top: ""
+  top: "data"
   top: "label"
   data_param{
     source: "./build/classifier"
@@ -1741,6 +1741,7 @@ layer {
   bottom: "output"
   bottom: "label"
   top: "loss"
+  loss_weight: 1
 }
 layer {
   name: "accuracy"

@@ -19,17 +19,23 @@ int main(){
     //     std::cout<<" "<<confidence[index[i]];
     // }
 
-    int top_k = 5;
-    std::shared_ptr<Model<Box> > model = ModelRegistry()->Create("Classifier", top_k);
-    model->init("../script/deploy.prototxt","../build/classifier__iter_599.caffemodel",1);
+    int top_k = 1;
+    std::shared_ptr<Model > model = ModelRegistry()->Create("Classifier", top_k);
+    model->init("../script/deploy.prototxt","../build/classifier_solver_iter_314.caffemodel",1);
 
-    cv::Mat img = cv::imread("images/1.png");
-    vector<float> confidence;
-    vector<int> label;
-    //model->run_each(img, confidence, label);
-    //for(int i = 0; i < top_k; ++ i){
-    //    auto x = map_int2string.find(label[i]);
-    //    cout<< "label: "<< label[i] <<" confidence: "<< confidence[i]<<" name: "<< x->second << std::endl;
-   // }
+
+    for(int i = 1; i < 1000; ++ i){
+        cv::Mat img = cv::imread("images/"+std::to_string(i)+".png");
+        vector<float> confidence;
+        vector<int> label;
+        model->run_each(img, confidence, label);
+        for(int i = 0; i < top_k; ++ i){
+            auto x = map_int2string.find(label[i]);
+            cout<< "label: "<< label[i] <<" confidence: "<< confidence[i]<<" name: "<< x->second << std::endl;
+        }
+        cv::imshow("src", img);
+        cv::waitKey(0);
+    }
+
 
 }

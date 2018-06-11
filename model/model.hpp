@@ -3,6 +3,8 @@
 #include <memory>
 #include "caffe/caffe.hpp"
 #include "opencv2/opencv.hpp"
+#include "core/registry.h"
+#include "core/box.hpp"
 
 #include <string>
 using namespace std;
@@ -15,7 +17,7 @@ namespace kurff{
     template<typename T>
     class Model{
         public:
-            Model(){
+            Model(int top_k): top_k_(top_k){
 
             }
             ~Model(){
@@ -30,11 +32,14 @@ namespace kurff{
                 }
 
                 net_.reset(new Net<float>(proto, TEST));
+                LOG(INFO)<<"-----------------------------------------";
                 net_->CopyTrainedLayersFrom(weight_file);
+                
                 Blob<float>* input_layer = net_->input_blobs()[0];
                 num_channels_ = input_layer->channels();
                 CHECK(num_channels_ == 3 || num_channels_ == 1) << "Input layer should have 1 or 3 channels.";
                 input_geometry_ = cv::Size(input_layer->width(), input_layer->height());
+                
                 SetMean();
 
 
@@ -57,7 +62,6 @@ namespace kurff{
             } 
 
             void SetMean(){
-                stringstream ss(mean_value);
                 vector<float> values ={104,117,123};
                 std::vector<cv::Mat> channels;
                 for (int i = 0; i < num_channels_; ++i) {
@@ -101,12 +105,16 @@ namespace kurff{
                 //<< "Input channels are not wrapping the input layer of the network.";
             }
         protected:
-            shared_ptr<Net<float> > net_;
+            std::shared_ptr<Net<float> > net_;
             cv::Size input_geometry_;
             int num_channels_;
             cv::Mat mean_;
+            int top_k_;
 
     };
+    CAFFE_DECLARE_REGISTRY(ModelRegistry, Model<Box>, int);
+    CAFFE_DEFINE_REGISTRY(ModelRegistry, Model<Box>, int);
+
 
 }
 

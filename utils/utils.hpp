@@ -2,6 +2,8 @@
 #define __KURFF_UTILS_HPP_
 #include "core/box.hpp"
 #include "glog/logging.h"
+#include <vector>
+using namespace std;
 namespace kurff{
 
 float overlap(const Box& b0, const Box& b1){
@@ -82,6 +84,23 @@ void SplitString(const std::string& s, std::vector<std::string>& v, const std::s
         v.push_back(s.substr(pos1));
 }
 
+template <typename Container>
+struct compare_indirect_index
+{
+    const Container& container;
+    compare_indirect_index( const Container& container ): container( container ) { }
+    bool operator () ( size_t lindex, size_t rindex ) const
+    {
+        return container[ lindex ] < container[ rindex ];
+    }
+};
+
+vector<size_t> sort_index(const vector<float>& confidence){
+    vector <size_t> indices( confidence.size(), 0 );
+    iota( indices.begin(), indices.end(), 0 );  // found in <numeric>
+    sort( indices.begin(), indices.end(), compare_indirect_index <decltype(confidence)> ( confidence ) );
+    return indices;
+}
 
 
 

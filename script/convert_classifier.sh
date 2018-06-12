@@ -1,2 +1,2 @@
-find ./build/images/ -name "*.png" > ./build/image.list
-./3rdparty/caffe/distribute/bin/convert_imageset.bin --shuffle=true --resize_width=64 --resize_width=64 ./ ./build/image.list ./build/classifier 
+#find ./build/images/ -name "*.png" > ./build/image.list
+./3rdparty/caffe/distribute/bin/convert_imageset.bin --shuffle=true --resize_width=64 --resize_width=64 ./build/images/ ./build/file.txt ./build/classifier 

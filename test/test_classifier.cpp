@@ -21,7 +21,7 @@ int main(){
 
     int top_k = 1;
     std::shared_ptr<Model > model = ModelRegistry()->Create("Classifier", top_k);
-    model->init("../script/deploy.prototxt","../build/classifier_solver_iter_314.caffemodel",1);
+    model->init("../script/deploy.prototxt","../build/_iter_4318.caffemodel",1);
 
 
     for(int i = 1; i < 1000; ++ i){

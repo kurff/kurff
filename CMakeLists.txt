@@ -41,3 +41,6 @@ target_link_libraries(convert_database caffe boost_system boost_filesystem openc
 
 add_executable(test_classifier test/test_classifier.cpp)
 target_link_libraries(test_classifier caffe boost_system boost_filesystem opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc  glog gflags)
+
+add_executable(test_input test/test_input.cpp)
+target_link_libraries(test_input caffe boost_system boost_filesystem opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc  glog gflags)

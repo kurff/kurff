@@ -4,6 +4,7 @@
 #include "utils/utils.hpp"
 #include "core/common.hpp"
 #include "core/box.hpp"
+#include "utils/visualization.hpp"
 namespace kurff{
     //template<typename T>
     class Classifier : public Model{
@@ -24,16 +25,31 @@ namespace kurff{
                 for(auto& obj : objects){
                     sub = image(Rect(obj.x, obj.y, obj.width, obj.height));
                     run_each(sub, confidence, label);
-                    obj.top_pred_.resize(this->top_k_);
-                    int cnt = 0;
-                    for(auto & top : obj.top_pred_ ){
-                        top.confidence_ = confidence[cnt];
-                        top.predict_ = label[cnt];
+                    //LOG(INFO)<<"confidence: "<<confidence[0] <<" label: "<< label[0];
+                    //cv::imshow("classifier", sub);
+                    //cv::waitKey(0);
+                    //obj.top_pred_.resize(this->top_k_);
+                    //LOG(INFO)<<"top k"<< this->top_k_;
+                    //int cnt = 0;
+                    for(int i = 0; i < this->top_k_; ++ i ){
+                        Top top;
+                        top.confidence_ = confidence[i];
+                        top.predict_ = label[i];
                         auto c = map_int2string.find(top.predict_);
                         top.name_ = c->second; 
-                        ++ cnt; 
+                        obj.top_pred_.push_back(top);
+                        
                     }
+                    Mat img;
+                    image.copyTo(img);
+                    visualize(img, obj, Scalar(0,255,0), true);
+                    cv::imshow("res", img);
+                    cv::waitKey(0);
+
                 }
+
+                
+
             }
             
             void run_each(const Mat& image, vector<float>& confidence, vector<int>& label){

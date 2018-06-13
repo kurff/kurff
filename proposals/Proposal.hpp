@@ -3,6 +3,7 @@
 #include "opencv2/opencv.hpp"
 #include "core/box.hpp"
 #include "core/registry.h"
+#include "glog/logging.h"
 using namespace cv;
 namespace kurff{
     class Proposal{

@@ -6,6 +6,7 @@ namespace kurff{
 
     // read memory to datum
     bool ReadMemoryToDatum(){
+        
 
     }
 

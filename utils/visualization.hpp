@@ -20,6 +20,34 @@ void visualize(Mat& img, const vector<Box>& boxes, Scalar scalar){
     }
 }
 
+void visualize(Mat& img, const vector<Box>& boxes, Scalar scalar, bool show_text){
+    for(auto box : boxes){
+        if(show_text){
+            LOG(INFO)<<"show text: "<< box.top_pred_.size();
+            for(auto top : box.top_pred_ ){
+                //LOG(INFO)<<"show text";
+                putText(img, top.name_, cvPoint(box.x-5, box.y-5), FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0,0,250), 2, CV_AA);
+            }
+
+        }
+        rectangle(img, box, scalar,3);
+    }
+}
+
+void visualize(Mat& img, const Box& box, Scalar scalar, bool show_text){
+
+    if(show_text){
+        LOG(INFO)<<"show text: "<< box.top_pred_.size();
+        for(auto top : box.top_pred_ ){
+                //LOG(INFO)<<"show text";
+            putText(img, top.name_, cvPoint(box.x-5, box.y-5), FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0,0,250), 2, CV_AA);
+        }
+
+    }
+    rectangle(img, box, scalar,3);
+    
+}
+
 template<typename Box>
 void visualize(Mat& img, const vector<vector<Box> >& boxes, Scalar scalar ){
     LOG(INFO)<<"draw "<< boxes.size() <<" boxes";

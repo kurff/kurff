@@ -44,3 +44,7 @@ target_link_libraries(test_classifier caffe boost_system boost_filesystem opencv
 
 add_executable(test_input test/test_input.cpp)
 target_link_libraries(test_input caffe boost_system boost_filesystem opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc  glog gflags)
+
+
+add_executable(test_framework test/test_framework.cpp proposals/mser/mser.cpp utils/colors.cpp)
+target_link_libraries(test_framework caffe boost_system boost_filesystem opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc  glog gflags)

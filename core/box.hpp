@@ -7,11 +7,22 @@
 using namespace std;
 namespace kurff{
 
-typedef struct Top_{
+class Top{
+    public:
+        Top(const Top& top){
+            confidence_ = top.confidence_;
+            name_ = top.name_;
+            predict_ = top.predict_;
+        }
+        Top():confidence_(0.0f), name_(""), predict_(0){
+
+        }
+
+
     float confidence_;
     string name_;
     int predict_;
-}Top;
+};
 
 
 class Box: public cv::Rect{
@@ -31,7 +42,9 @@ class Box: public cv::Rect{
             y = box.y;
             height = box.height;
             width = box.width;
-            
+            top_pred_ = box.top_pred_;
+            label_ = box.label_;
+            label_name_ = box.label_name_;
         }
     public:
         vector<Top> top_pred_;      //prediction

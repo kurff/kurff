@@ -7,7 +7,7 @@ namespace kurff{
     class CannyProposal : public Proposal{
         public:
             CannyProposal(int number_proposals, int ratio = 3, int lowThreshold = 20, int kernel_size = 3): Proposal(number_proposals)
-            , ratio_(ratio), lowThreshold_(lowThreshold), kernel_size_(kernel_size){
+            , ratio_(ratio), lowThreshold_(lowThreshold), kernel_size_(kernel_size), ratio_size_(1.3f){
 
             }
             ~CannyProposal(){
@@ -31,12 +31,27 @@ namespace kurff{
                 proposals.clear();
                 for(int i = 1; i < stats.rows; ++ i){
                     Box box;
-                    box.x = stats.at<int>(i,CC_STAT_LEFT ) ;
-                    box.y = stats.at<int>(i,CC_STAT_TOP);
-                    box.width = stats.at<int>(i, CC_STAT_WIDTH );
-                    box.height = stats.at<int>(i, CC_STAT_HEIGHT);
+                    int height = stats.at<int>(i, CC_STAT_HEIGHT);
+                    int width = stats.at<int>(i, CC_STAT_WIDTH );
+                    int max_size = std::max(height, width);
+                    int size = ratio_size_* max_size;
+                    
+                    int cx = stats.at<int>(i,CC_STAT_LEFT ) + width/2;
+                    int cy = stats.at<int>(i,CC_STAT_TOP) + height/2;
+                    box.x = std::max(0, cx - size/2);
+                    box.y = std::max(0, cy  - size/2);
+
+                    int xe = std::min(cx + size/2, image.cols-1);
+                    int ye = std::min(cy + size/2, image.rows-1);
+
+                    //assert(xe > box.x);
+                    //assert(ye > box.y);
+                    box.width = std::max(xe - box.x,1);
+                    box.height = std::max(ye - box.y,1);
                     proposals.push_back(box);
                 }
+
+
 
 
             }
@@ -44,6 +59,7 @@ namespace kurff{
             int ratio_;
             int lowThreshold_;
             int kernel_size_;
+            float ratio_size_;
             
 
 

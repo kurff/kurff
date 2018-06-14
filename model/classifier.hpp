@@ -28,27 +28,26 @@ namespace kurff{
                     //LOG(INFO)<<"confidence: "<<confidence[0] <<" label: "<< label[0];
                     //cv::imshow("classifier", sub);
                     //cv::waitKey(0);
-                    //obj.top_pred_.resize(this->top_k_);
+                    obj.top_pred_.resize(this->top_k_);
                     //LOG(INFO)<<"top k"<< this->top_k_;
                     //int cnt = 0;
                     for(int i = 0; i < this->top_k_; ++ i ){
-                        Top top;
-                        top.confidence_ = confidence[i];
-                        top.predict_ = label[i];
-                        auto c = map_int2string.find(top.predict_);
-                        top.name_ = c->second; 
-                        obj.top_pred_.push_back(top);
-                        
+                        //Top top;
+                        obj.top_pred_[i].confidence_ = confidence[i];
+                        //top.confidence_ = confidence[i];
+                        //top.predict_ = label[i];
+                        auto c = map_int2string.find(label[i]);
+                        obj.top_pred_[i].name_ = c->second; 
+                        obj.top_pred_[i].predict_ = label[i];
+                        //obj.top_pred_.push_back(top);                       
                     }
-                    Mat img;
-                    image.copyTo(img);
-                    visualize(img, obj, Scalar(0,255,0), true);
-                    cv::imshow("res", img);
-                    cv::waitKey(0);
-
                 }
 
-                
+                Mat img;
+                image.copyTo(img);
+                visualize(img, objects, Scalar(0,255,0), true);
+                cv::imshow("res", img);
+                cv::waitKey(0);       
 
             }
             

@@ -6,7 +6,7 @@ int main(int argc, char* argv[]){
 
     Parameters* parameters = global_parameters();
     read_from_text("parameters.txt", parameters);
-
+    
 
 
 

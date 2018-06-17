@@ -3,6 +3,7 @@
 #include "core/box.hpp"
 #include "glog/logging.h"
 #include <vector>
+#include <cmath>
 using namespace std;
 namespace kurff{
 
@@ -102,6 +103,37 @@ vector<int> sort_index(const vector<float>& confidence){
     return indices;
 }
 
+
+
+Box expand_box(const Box& box, float ratio, int height, int width){
+    float cx = float(box.x) + float(box.width)/2.0f;
+    float cy = float(box.y) + float(box.height)/2.0f;
+
+    Box box_new;
+
+    float width_box = float(box.width)/2.0f * ratio;
+    float height_box = float(box.height)/2.0f * ratio;
+    box_new.x = (int)std::max(0.0f, cx - (width_box));
+    box_new.y = (int)std::max(0.0f, cy - (height_box));
+    
+    float ex = std::min(float(width-1), cx + (width_box));
+    float ey = std::min(float(height-1), cy + (height_box));
+
+    box_new.width = int(ex - box_new.x);
+    box_new.height = int(ey - box_new.y);
+
+    //assert(box_new.width >0);
+    //assert(box_new.height>0);
+
+    //LOG(INFO)<< box_new.x <<" "<< box_new.y <<" "<< box_new.width <<" "<< box_new.height;
+    //LOG(INFO)<<" "<<width_box<<" "<<height_box;
+    //LOG(INFO)<< width <<" "<<height;
+    return box_new;
+
+
+
+
+}
 
 
 

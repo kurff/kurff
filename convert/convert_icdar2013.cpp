@@ -84,6 +84,9 @@ int main(int argc, char** argv) {
     label = atoi(line.substr(pos + 1).c_str());
     lines.push_back(std::make_pair(line.substr(0, pos), label));
   }
+
+
+  
   if (FLAGS_shuffle) {
     // randomly shuffle data
     LOG(INFO) << "Shuffling data";

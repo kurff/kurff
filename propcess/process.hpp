@@ -68,6 +68,10 @@ CAFFE_REGISTER_CLASS(ProcessRegistry, Denoise, Denoise);
 
 
 
+
+
+
+
 }
 
 

@@ -13,16 +13,17 @@ using namespace std;
 namespace kurff{
 
     // read memory to datum
-    bool ReadMemoryToDatum(cv::Mat& image, const Box& box, int resize_height, int resize_width, Datum& datum){
+    bool ReadMemoryToDatum(cv::Mat& image, const Box& box, int resize_height, int resize_width, int label, Datum& datum){
         int height = image.rows;
         int width = image.cols;
         cv::Mat sub = image(Rect(box.x,box.y,box.width,box.height));
         cv::Mat img;
         cv::resize(sub,img,Size(resize_width,resize_height));
         CVMatToDatum(img, datum);
+        datum->set_label(label);
         return true;
     }
-    bool ReadImageToDatum(const string& file, Datum& datum){
+    bool ReadBoxImageToDatum(const string& file, Datum& datum){
         
 
     }

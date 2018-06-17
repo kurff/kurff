@@ -58,6 +58,12 @@ namespace kurff{
                 while(getline(fc, text_content)){
                     vector<string> names;
                     SplitString(text_content, names, " ");
+                    box.label_name_.clear();
+                    if(names[0][0]=='#'){
+                        //LOG(INFO)<<"error";
+                        LOG(INFO)<<text_content;
+                        continue;
+                    }
                     if(names.size()<=1){
                         boxes_all.push_back(boxes);
                         boxes.clear();
@@ -76,8 +82,12 @@ namespace kurff{
                         ss << names[8];
                         ss >> y1;
                         box.height = y1-box.y;
+                        
 
-                        box.label_name_.push_back (names[9].substr(1, names[9].size()-3) );
+                        box.label_name_.push_back (names[9].substr(1,1));
+                        
+                        //LOG(INFO)<<names[9] <<" "<< text_content;
+                        //LOG(INFO)<< box.label_name_[0];
                         boxes.push_back(box);
                     }
                 }

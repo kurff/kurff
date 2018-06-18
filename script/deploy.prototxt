@@ -1684,7 +1684,7 @@ layer {
     decay_mult: 0.0
   }
   inner_product_param {
-    num_output: 62
+    num_output: 63
     weight_filler {
       type: "xavier"
       std: 0.10000000149

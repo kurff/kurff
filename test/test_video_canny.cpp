@@ -44,7 +44,7 @@ int main(int argc, char* argv[]){
 
         cv::Mat vis_canny;
         image.copyTo(vis_canny);
-        visualize<Box>(vis_canny, canny_boxes, Colors::Red);
+        visualize(vis_canny, canny_boxes, Colors::Red);
         cv::Mat show;
         cv::resize(vis_canny, show,cv::Size(vis_canny.cols/2, vis_canny.rows/2));
         cv::imshow("edge proposal", show);

@@ -62,6 +62,27 @@ void overlap(vector<Box>& proposal, const vector<vector<Box> >& bounding_box, fl
     LOG(INFO)<<"after size: "<< proposal.size();
 }
 
+void overlap(const vector<Box>& proposal, const vector<vector<Box> >& bounding_box, float threshold,
+vector<Box>& prune ){
+    //LOG(INFO)<<"";
+    prune.clear();
+    for(auto prop : proposal){
+        float o = 0.0f;
+        float ov = 0.0f;
+        for(auto box : bounding_box){
+            for(auto b: box){
+                ov = overlap(prop, b);
+                if( o <= ov){
+                    o = ov;
+                }
+            }
+        }
+        if(o <= threshold){
+            prune.push_back(prop);
+        }
+    }
+}
+
 
 // bool compare(const TextBox& t0, const TextBox& t1){
 //     return t0.confidence_ > t1.confidence_;

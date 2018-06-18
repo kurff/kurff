@@ -43,11 +43,11 @@ namespace kurff{
                     }
                 }
 
-                Mat img;
-                image.copyTo(img);
-                visualize(img, objects, Scalar(0,255,0), true);
-                cv::imshow("res", img);
-                cv::waitKey(0);       
+                // Mat img;
+                // image.copyTo(img);
+                // visualize(img, objects, Scalar(0,255,0), true);
+                // cv::imshow("res", img);
+                // cv::waitKey(0);       
 
             }
             

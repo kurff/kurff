@@ -23,12 +23,12 @@ int main(int argc, char* argv[]){
 
     cv::Mat vis_mser;
     image.copyTo(vis_mser);
-    visualize<Box>(vis_mser, mser_boxes, Colors::Red);
+    visualize(vis_mser, mser_boxes, Colors::Red);
     cv::imwrite("mser_result.jpg", vis_mser);
 
     cv::Mat vis_fast;
     image.copyTo(vis_fast);
-    visualize<Box>(vis_fast, boxes, Colors::Red);
+    visualize(vis_fast, boxes, Colors::Red);
     cv::imwrite("fast_result.jpg",vis_fast);
 
     vector<Box> canny_boxes;
@@ -37,7 +37,7 @@ int main(int argc, char* argv[]){
 
     cv::Mat vis_canny;
     image.copyTo(vis_canny);
-    visualize<Box>(vis_canny, canny_boxes, Colors::Red);
+    visualize(vis_canny, canny_boxes, Colors::Red);
     cv::imwrite("canny_result.jpg",vis_canny);
     return 0;
 }

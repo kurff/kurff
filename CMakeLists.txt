@@ -49,5 +49,11 @@ target_link_libraries(test_input caffe boost_system boost_filesystem opencv_core
 add_executable(test_framework test/test_framework.cpp proposals/mser/mser.cpp utils/colors.cpp)
 target_link_libraries(test_framework caffe boost_system boost_filesystem opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc  glog gflags)
 
-add_executable(convert_icdar2013 convert/convert_classifier.cpp)
+add_executable(convert_classifier convert/convert_classifier.cpp)
+target_link_libraries(convert_classifier opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc  glog gflags)
+
+
+add_executable(convert_icdar2013 convert/convert_icdar2013.cpp)
 target_link_libraries(convert_icdar2013 opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc  glog gflags)
+
+

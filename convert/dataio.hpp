@@ -18,6 +18,7 @@ namespace kurff{
         int width = image.cols;
         cv::Mat sub = image(Rect(box.x,box.y,box.width,box.height));
         cv::Mat img;
+        
         cv::resize(sub,img,Size(resize_width,resize_height));
         CVMatToDatum(img, datum);
         datum->set_label(label);

@@ -81,8 +81,12 @@ int main(int argc, char** argv){
                     label = std::to_string(map_string2int.size()-1);
                 }
                 ofs << std::to_string(cnt)+".png "<<label << std::endl;
-
                 ++ cnt;
+                if(cnt %100 ==0){
+
+
+                    LOG(INFO)<<"cnt: "<<cnt;
+                }
                 cv::imwrite(name, sub);
                 cv::waitKey(1);
             }
@@ -98,6 +102,9 @@ int main(int argc, char** argv){
             string name = path + "/" + std::to_string(cnt)+".png";
             ofs << std::to_string(cnt)+".png "<< std::to_string(map_string2int.size()-1) << std::endl;
             ++ cnt;
+            if(cnt % 100 ==0){
+                LOG(INFO)<<"cnt: "<<cnt;
+            }
         }
         LOG(INFO)<<"process "<< cnt <<" images";
 

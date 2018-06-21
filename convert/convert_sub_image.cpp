@@ -44,8 +44,8 @@ DEFINE_bool(shuffle, false,
     "Randomly shuffle the order of images and their labels");
 DEFINE_string(backend, "lmdb",
         "The backend {lmdb, leveldb} for storing the result");
-DEFINE_int32(resize_width, 0, "Width images are resized to");
-DEFINE_int32(resize_height, 0, "Height images are resized to");
+DEFINE_int32(resize_width, 64, "Width images are resized to");
+DEFINE_int32(resize_height, 64, "Height images are resized to");
 DEFINE_bool(check_size, false,
     "When this option is on, check that all the datum have the same size");
 DEFINE_bool(encoded, false,
@@ -115,7 +115,7 @@ int main(int argc, char** argv) {
     dataset->get(i, img, annotation);
     for(int j =0; j < annotation.size(); ++ j){
         for(int k = 0; k < annotation[j].size(); ++ j){
-            status = ReadMemoryToDatum( &datum);
+            status = ReadMemoryToDatum(img, annotation[i][j], FLAGS_resize_height, FLAGS_resize_width, &datum);
             if (status == false) continue;
 
             string key_str = std::to_string(count);

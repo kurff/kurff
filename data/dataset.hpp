@@ -135,6 +135,7 @@ namespace kurff{
                     std::shared_ptr<vector<vector<Box> > > ptr(new vector<vector<Box> >() );
                     this->anno_reader_->load(d.second.second, *ptr);
                     this->bounding_boxes_.insert(std::make_pair(d.first, ptr));
+                    
                 }
 
             }

@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "opencv2/opencv.hpp"
+#include "glog/logging.h"
 using namespace std;
 namespace kurff{
 
@@ -46,6 +47,29 @@ class Box: public cv::Rect{
             label_ = box.label_;
             label_name_ = box.label_name_;
         }
+
+        bool check(int rheight, int rwidth){
+            if(x < 0 || y <0 || width < 0 || height < 0 ){
+                return false;
+            }
+
+            x = std::max(0,x);
+            y = std::max(0,y);
+
+            int x1 = std::min( x + width, rwidth-1);
+            int y1 = std::min( y + height, rheight-1);
+
+            width = x1 - x;
+            height = y1 - y; 
+            //LOG(INFO)<<x<<" "<<y<<" "<<width<<" "<<height;
+            if(width <= 1 || height <= 1 ){
+                return false;
+            }else{
+                return true;
+            }
+
+        }
+
     public:
         vector<Top> top_pred_;      //prediction
         vector<int> label_;         //label

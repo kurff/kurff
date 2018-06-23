@@ -7,6 +7,7 @@
 #include "glog/logging.h"
 #include "utils/utils.hpp"
 #include "core/box.hpp"
+#include "core/common.hpp"
 using namespace std;
 namespace kurff{
     class Annotation{
@@ -85,6 +86,12 @@ namespace kurff{
                         
 
                         box.label_name_.push_back (names[9].substr(1,1));
+                        auto it = map_string2int.find(box.label_name_[0]);
+                        if(it != map_string2int.end()){
+                            box.label_.push_back(it->second);
+                        }else{
+                            box.label_.push_back(map_string2int.size()-1);
+                        }
                         
                         //LOG(INFO)<<names[9] <<" "<< text_content;
                         //LOG(INFO)<< box.label_name_[0];

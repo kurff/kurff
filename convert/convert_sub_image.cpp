@@ -102,13 +102,12 @@ int main(int argc, char** argv) {
   int resize_width = std::max<int>(0, FLAGS_resize_width);
 
   // Create new DB
-
-
   boost::filesystem::path path(FLAGS_lmdb_name);
   if(boost::filesystem::is_directory(path)){
       boost::filesystem::remove_all(path);
   }
 
+  vector<Box> proposals;
 
   scoped_ptr<db::DB> db(db::GetDB(FLAGS_backend));
   db->Open(FLAGS_lmdb_name, db::NEW);
@@ -127,8 +126,6 @@ int main(int argc, char** argv) {
     dataset->get(i, img, annotation);
     for(int j =0; j < annotation.size(); ++ j){
         for(int k = 0; k < annotation[j].size(); ++ k){
-
-
             string label_name = annotation[j][k].label_name_[0];
             int label = annotation[j][k].label_[0];
             //LOG(INFO)<<"count: "<<count;
@@ -150,6 +147,13 @@ int main(int argc, char** argv) {
             }
 
         }
+    }
+
+    canny->run(img, proposals);
+    
+    for(int j = 0; j < proposals.size(); ++ j ){
+      status = ReadMemoryToDatum(img, proposals[j], FLAGS_resize_height, FLAGS_resize_width, label, &datum);
+      if (status == false) continue;
     }
   }
   // write the last batch

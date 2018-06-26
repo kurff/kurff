@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "core/box.hpp"
+#include "core/registry.h"
 using namespace std;
 namespace kurff{
     class Cascade{
@@ -63,3 +64,5 @@ namespace kurff{
 
 
 }
+
+#endif

@@ -28,7 +28,7 @@
 #include "utils/utils.hpp"
 #include "data/dataset.hpp"
 #include "utils/visualization.hpp"
-//#include "core/common.hpp"
+#include "core/common.hpp"
 #include "proposals/Proposal.hpp"
 #include "proposals/CannyProposal.hpp"
 #include "convert/dataio.hpp"
@@ -38,8 +38,6 @@ using namespace caffe;  // NOLINT(build/namespaces)
 using namespace kurff;
 using std::pair;
 using boost::scoped_ptr;
-
-
 DEFINE_bool(gray, false,
     "When this option is on, treat images as grayscale ones");
 DEFINE_bool(shuffle, false,
@@ -152,8 +150,20 @@ int main(int argc, char** argv) {
     canny->run(img, proposals);
     
     for(int j = 0; j < proposals.size(); ++ j ){
+      label = map_string2int.size() -1;
       status = ReadMemoryToDatum(img, proposals[j], FLAGS_resize_height, FLAGS_resize_width, label, &datum);
       if (status == false) continue;
+      
+      string key_str = std::to_string(count);
+      string out;
+      CHECK(datum.SerializeToString(&out));
+      txn->Put(key_str, out);
+            //LOG(INFO)<<"read Memory";
+      if(++count % 1000 ==0){
+          txn->Commit();
+          txn.reset(db->NewTransaction());
+          LOG(INFO) << "Processed " << count << " files.";
+      }
     }
   }
   // write the last batch

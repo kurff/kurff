@@ -105,6 +105,8 @@ vector<int>& index ){
         }
         if(o > threshold){
             index.push_back(best);
+        }else{
+            index.push_back(-1);
         }
     }
 }
@@ -113,7 +115,22 @@ vector<int>& index ){
 //     return t0.confidence_ > t1.confidence_;
 // }
 
+void merge_box(const Box& b1, const Box& b2, Box& b3){
+    b3.x = std::min(b1.x, b2.x);
+    b3.y = std::min(b1.y, b2.y);
+    int x1 = b1.x + b1.width;
+    int y1 = b1.y + b1.height;
 
+    int x2 = b2.x + b2.width;
+    int y2 = b2.y + b2.height;
+
+    int x = std::max(x1,x2);
+    int y = std::max(y1,y2);
+
+    b3.width = x - b3.x;
+    b3.height = y - b3.y;
+
+}
 
 void SplitString(const std::string& s, std::vector<std::string>& v, const std::string& c)
 {

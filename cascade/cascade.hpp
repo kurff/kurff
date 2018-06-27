@@ -61,5 +61,6 @@ namespace kurff{
     CAFFE_REGISTER_CLASS(CascadeRegistry, CascadeRegression, CascadeRegression);
 
 
+    
 
 }

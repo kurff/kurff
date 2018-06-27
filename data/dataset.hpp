@@ -96,6 +96,13 @@ namespace kurff{
                 return float(cnt) / float(total);
             }
 
+            float precision(float threshold = 0.5f){
+                
+
+            }
+
+
+
         protected:
             std::map<string, std::pair< string , string> > dataset_;
             std::unique_ptr<DataReader> data_reader_;

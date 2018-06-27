@@ -111,6 +111,22 @@ namespace kurff{
     CAFFE_REGISTER_CLASS(AnnotationRegistry, ICDAR2013Annotation, ICDAR2013Annotation);
 
 
+    class ReadDetectionResult : public Annotation{
+        public:
+            ReadDetectionResult(){
+
+            }
+            ~ReadDetectionResult(){
+
+            }
+
+            void load(string file_name, vector<vector<Box> >& boxes){
+                
+
+
+            }
+
+    };
     
 }
 

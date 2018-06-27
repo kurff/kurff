@@ -36,8 +36,12 @@ namespace kurff{
                     box.width = stats.at<int>(i, CC_STAT_WIDTH );                   
                     box.x = stats.at<int>(i,CC_STAT_LEFT ) ;
                     box.y = stats.at<int>(i,CC_STAT_TOP);
+                    // box too small
+                    if(box.height <5 || box.width < 5){
+                        continue;
+                    }
 
-                    Box box_new;
+                    //Box box_new;
 
 
                     proposals.push_back(box);

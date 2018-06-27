@@ -83,6 +83,31 @@ vector<Box>& prune ){
     }
 }
 
+// return the index of overlapping index
+// the size of index is same to proposal
+
+void overlap(const vector<Box>& proposal, const vector<Box>& bounding_box, float threshold,
+vector<int>& index ){
+    //LOG(INFO)<<"";
+    index.clear();
+    for(auto prop : proposal){
+        float o = 0.0f;
+        float ov = 0.0f;
+        int cnt = -1;
+        int best = 0;
+        for(auto box : bounding_box){
+            ++ cnt;       
+            ov = overlap(prop, box);
+            if( o <= ov){
+                o = ov;
+                best = cnt;
+            }
+        }
+        if(o > threshold){
+            index.push_back(best);
+        }
+    }
+}
 
 // bool compare(const TextBox& t0, const TextBox& t1){
 //     return t0.confidence_ > t1.confidence_;

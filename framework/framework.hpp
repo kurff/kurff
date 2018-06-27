@@ -34,6 +34,23 @@ namespace kurff{
 
     };
 
+    class CascadeFramework{
+        public:
+            CascadeFramework(){
+                proposal_=ProposalRegistry()->Create("CannyProposal", 200);
+                model_=ModelRegistry()->Create("Regression",1);
+                model_->init("../script/deploy.prototxt","../build/_iter_10000.caffemodel",1);
+            }
+            ~CascadeFramework(){
+
+            }
+        protected:
+            std::shared_ptr<Proposal> proposal_;
+            std::shared_ptr<Model> regression_;
+
+
+    };
+
 }
 
 

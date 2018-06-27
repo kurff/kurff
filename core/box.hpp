@@ -74,6 +74,9 @@ class Box: public cv::Rect{
         vector<Top> top_pred_;      //prediction
         vector<int> label_;         //label
         vector<string> label_name_; //label
+        vector<float> dx_pred_;
+        vector<float> dx_label_;
+        
 
 };
 

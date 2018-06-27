@@ -148,13 +148,12 @@ int main(int argc, char** argv) {
     }
 
     canny->run(img, proposals);
-    
     vector<Box> prune;
     overlap(proposals, annotation, 0.5, prune);
-
-    for(int j = 0; j < proposals.size(); ++ j ){
-      label = map_string2int.size() -1;
-      status = ReadMemoryToDatum(img, proposals[j], FLAGS_resize_height, FLAGS_resize_width, label, &datum);
+    label = map_string2int.size() -1; // all negative
+    for(int j = 0; j < prune.size(); ++ j ){
+      
+      status = ReadMemoryToDatum(img, prune[j], FLAGS_resize_height, FLAGS_resize_width, label, &datum);
       if (status == false) continue;
       
       string key_str = std::to_string(count);

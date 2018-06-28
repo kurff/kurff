@@ -18,7 +18,15 @@ namespace kurff{
                 proposal.clear();
                 vector<int> index;
                 overlap(proposal1, proposal2, 0.7, index);
-                
+                int cnt = -1;
+                for(auto p : proposal1){
+                    Box box;
+                    ++ cnt;
+                    if( index[cnt] != -1){
+                        merge_box(p, proposal2[index[cnt]], box);
+                    }
+                    proposal.push_back(box);
+                }
                 
 
             }

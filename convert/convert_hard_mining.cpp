@@ -32,7 +32,8 @@
 #include "proposals/Proposal.hpp"
 #include "proposals/CannyProposal.hpp"
 #include "convert/dataio.hpp"
-#include "utils/random.hpp"
+
+#include "model/classifier.hpp"
 
 
 using namespace caffe;  // NOLINT(build/namespaces)
@@ -93,7 +94,10 @@ int main(int argc, char** argv) {
     std::shared_ptr<Proposal> canny (ProposalRegistry()->Create("CannyProposal",100));
 
   //boost::is_directory();
-
+  int top_k = 1;
+  std::shared_ptr<Model > model = ModelRegistry()->Create("Classifier", top_k);
+  model->init("../script/deploy.prototxt","../build/_iter_4318.caffemodel",1);
+ 
   if (encode_type.size() && !encoded)
     LOG(INFO) << "encode_type specified, assuming encoded=true.";
 
@@ -111,7 +115,7 @@ int main(int argc, char** argv) {
   scoped_ptr<db::DB> db(db::GetDB(FLAGS_backend));
   db->Open(FLAGS_lmdb_name, db::NEW);
   scoped_ptr<db::Transaction> txn(db->NewTransaction());
-  Random random;
+
   // Storing to db
   Datum datum;
   int count = 0;
@@ -123,13 +127,11 @@ int main(int argc, char** argv) {
   for (int i = 0; i < dataset->size(); ++ i) {
     bool status;
     dataset->get(i, img, annotation);
-    int number_positive = 0;
     for(int j =0; j < annotation.size(); ++ j){
         for(int k = 0; k < annotation[j].size(); ++ k){
             string label_name = annotation[j][k].label_name_[0];
             int label = annotation[j][k].label_[0];
             //LOG(INFO)<<"count: "<<count;
-            ++ number_positive;
             status = ReadMemoryToDatum(img, annotation[j][k], FLAGS_resize_height, FLAGS_resize_width, label, &datum);
             if (status == false) continue;
             //visualize(img, annotation, Scalar(0,0,255));
@@ -154,14 +156,19 @@ int main(int argc, char** argv) {
     vector<Box> prune;
     overlap(proposals, annotation, 0.5, prune);
     label = map_string2int.size() -1; // all negative
-    // random selection
 
-    if(number_positive <=0) continue;
+    vector<float> conf;
+    for(int j = 0; j < prune.size(); ++ j ){
+        vector<float> confidence;
+        vector<int> label;
 
-    
-    for(int j = 0; j < number_positive; ++ j ){
-      int index = random.Next(0, prune.size());
-      status = ReadMemoryToDatum(img, prune[index], FLAGS_resize_height, FLAGS_resize_width, label, &datum);
+        model->run_each(img, confidence, label);
+        conf.push_back(confidence[0]);
+    }
+
+    //vector<>;
+
+      status = ReadMemoryToDatum(img, prune[j], FLAGS_resize_height, FLAGS_resize_width, label, &datum);
       if (status == false) continue;
       
       string key_str = std::to_string(count);
@@ -174,7 +181,8 @@ int main(int argc, char** argv) {
           txn.reset(db->NewTransaction());
           LOG(INFO) << "Processed " << count << " files.";
       }
-    }
+
+
   }
   // write the last batch
   if (count % 1000 != 0) {

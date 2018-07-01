@@ -22,7 +22,7 @@ layer {
     mean_value: 104
     mean_value: 117
     mean_value: 123
-    shuffle: true
+    #shuffle: true
   }
   include: { phase: TRAIN }
 }

@@ -3,6 +3,7 @@
 #include "proposals/MSERProposal.hpp"
 #include "proposals/FASTProposal.hpp"
 #include "proposals/CannyProposal.hpp"
+#include "proposals/Merge.hpp"
 #include "utils/colors.h"
 #include "utils/utils.hpp"
 using namespace kurff;
@@ -13,6 +14,7 @@ int main(){
     std::shared_ptr<Proposal> mser (ProposalRegistry()->Create("MSERProposal",100));
     std::shared_ptr<Proposal> canny (ProposalRegistry()->Create("CannyProposal",100));
     std::shared_ptr<Proposal> fast (ProposalRegistry()->Create("FASTProposal", 100));
+    Merge* merge = new Merge();
     dataset->load("icdar2013.txt");
     for(int i = 0; i < dataset->size(); ++ i){
         //dataset->show(i);
@@ -28,8 +30,15 @@ int main(){
         //vector<Box> fast_boxes;
         //fast->run(img, fast_boxes);
         //overlap(mser_boxes, annotation);
-        canny_boxes.insert(canny_boxes.begin(), mser_boxes.begin(), mser_boxes.end());
-        dataset->push_proposals(i, canny_boxes);
+
+        //canny_boxes.insert(canny_boxes.begin(), mser_boxes.begin(), mser_boxes.end());
+        
+        vector<Box> prune;
+        merge->merge(canny_boxes, mser_boxes, prune); 
+        
+        dataset->push_proposals(i, prune);
+
+
         //overlap(canny_boxes, annotation);
         //LOG(INFO)<<"test overlap" << overlap(mser_boxes[0], mser_boxes[0]);
         cv::Mat vis_mser;

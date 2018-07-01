@@ -58,6 +58,12 @@ void visualize(Mat& img, const vector<vector<Box> >& boxes, Scalar scalar ){
     }
 }
 
+void visualize_sub(Mat& img, const Box& box){
+    cv::Mat sub = img(box);
+    cv::imshow("src", sub);
+    cv::waitKey(0);
+}
+
 
 
 

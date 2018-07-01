@@ -112,6 +112,9 @@ int main(int argc, char** argv) {
   db->Open(FLAGS_lmdb_name, db::NEW);
   scoped_ptr<db::Transaction> txn(db->NewTransaction());
   Random random;
+
+  float expand_ratio = 1.2f;
+
   // Storing to db
   Datum datum;
   int count = 0;
@@ -130,7 +133,9 @@ int main(int argc, char** argv) {
             int label = annotation[j][k].label_[0];
             //LOG(INFO)<<"count: "<<count;
             ++ number_positive;
-            status = ReadMemoryToDatum(img, annotation[j][k], FLAGS_resize_height, FLAGS_resize_width, label, &datum);
+            Box box = expand_box(annotation[j][k],expand_ratio, img.rows, img.cols);
+            //visualize_sub(img, box);
+            status = ReadMemoryToDatum(img,box, FLAGS_resize_height, FLAGS_resize_width, label, &datum);
             if (status == false) continue;
             //visualize(img, annotation, Scalar(0,0,255));
             //cv::imshow("src",img);
@@ -161,7 +166,9 @@ int main(int argc, char** argv) {
     
     for(int j = 0; j < number_positive; ++ j ){
       int index = random.Next(0, prune.size());
-      status = ReadMemoryToDatum(img, prune[index], FLAGS_resize_height, FLAGS_resize_width, label, &datum);
+      Box box = expand_box(prune[index], expand_ratio, img.rows, img.cols);
+      //visualize_sub(img, box);
+      status = ReadMemoryToDatum(img, box, FLAGS_resize_height, FLAGS_resize_width, label, &datum);
       if (status == false) continue;
       
       string key_str = std::to_string(count);

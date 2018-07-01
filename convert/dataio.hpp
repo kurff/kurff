@@ -34,6 +34,8 @@ namespace kurff{
         cv::Mat img;
         
         cv::resize(sub,img,Size(resize_width,resize_height));
+        cv::imshow("src", img);
+        cv::waitKey(0);
         CVMatToDatum(img, datum);
         datum->set_label(label);
         return flag;

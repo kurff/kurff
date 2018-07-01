@@ -38,8 +38,8 @@ namespace kurff{
         public:
             CascadeFramework(){
                 proposal_=ProposalRegistry()->Create("CannyProposal", 200);
-                model_=ModelRegistry()->Create("Regression",1);
-                model_->init("../script/deploy.prototxt","../build/_iter_10000.caffemodel",1);
+                regression_=ModelRegistry()->Create("Regression",1);
+                regression_->init("../script/deploy.prototxt","../build/_iter_10000.caffemodel",1);
             }
             ~CascadeFramework(){
 

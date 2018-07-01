@@ -45,7 +45,7 @@ int main(int argc, char** argv){
     ofstream ofs("label.txt");
 
     int number_files = 10000;
-
+    int folder_name = 0;
     for(int i = 0; i < dataset->size(); ++ i){
         LOG(INFO)<< i << " th images";
         dataset->get(i, img, annotation);
@@ -70,7 +70,7 @@ int main(int argc, char** argv){
                 cv::resize(sub,sub,Size(resize_width, resize_height));
                 
                 //cv::imshow("des", sub);
-                int folder_name = 0;
+
                 if(cnt % number_files ==0){
                     folder_name = cnt / number_files;
                     boost::filesystem::path dir(path+"/"+std::to_string(folder_name));

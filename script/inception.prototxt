@@ -11,7 +11,7 @@ layer {
   top: "data"
   top: "label"
   data_param{
-    source: "./build/icdar_classifier"
+    source: "./build/icdar2013_sub_classifier"
     # type of DB: LEVELDB or LMDB (LMDB supports concurrent reads)
     backend: LMDB
     # batch processing improves efficiency.
@@ -22,6 +22,7 @@ layer {
     mean_value: 104
     mean_value: 117
     mean_value: 123
+    shuffle: true
   }
   include: { phase: TRAIN }
 }
@@ -32,7 +33,7 @@ layer {
   top: "data"
   top: "label"
   data_param{
-    source: "./build/icdar_classifier_val"
+    source: "./build/icdar2013_sub_classifier_val"
     # type of DB: LEVELDB or LMDB (LMDB supports concurrent reads)
     backend: LMDB
     # batch processing improves efficiency.

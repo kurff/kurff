@@ -69,7 +69,7 @@ int main(int argc, char** argv){
                 cv::Mat sub = img(Rect(b.x, b.y, b.width, b.height));
                 cv::resize(sub,sub,Size(resize_width, resize_height));
                 
-                cv::imshow("des", sub);
+                //cv::imshow("des", sub);
                 int folder_name = 0;
                 if(cnt % number_files ==0){
                     folder_name = cnt / number_files;
@@ -100,7 +100,7 @@ int main(int argc, char** argv){
                     LOG(INFO)<<"cnt: "<<cnt;
                 }
                 cv::imwrite(name, sub);
-                cv::waitKey(1);
+                //cv::waitKey(1);
             }
         }
 
@@ -109,8 +109,8 @@ int main(int argc, char** argv){
             if(b.width <=0 || b.height <=0 ) continue;
             cv::Mat sub = img(Rect(b.x,b.y, b.width, b.height));
             cv::resize(sub,sub,Size(resize_width, resize_height));
-            cv::imshow("bk", sub);
-            cv::waitKey(1);
+            //cv::imshow("bk", sub);
+            //cv::waitKey(1);
             int folder_name = 0;
             if(cnt % number_files ==0){
                 folder_name = cnt / number_files;

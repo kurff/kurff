@@ -54,7 +54,7 @@ target_link_libraries(convert_classifier opencv_core opencv_highgui opencv_imgco
 
 
 add_executable(convert_icdar2013 convert/convert_icdar2013.cpp)
-target_link_libraries(convert_icdar2013 opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc  glog gflags)
+target_link_libraries(convert_icdar2013 opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc boost_system boost_filesystem  glog gflags)
 
 
 add_executable(convert_sub convert/convert_sub_image.cpp)

@@ -151,7 +151,6 @@ int main(int argc, char** argv) {
                 txn.reset(db->NewTransaction());
                 LOG(INFO) << "Processed " << count << " files.";
             }
-
         }
     }
 
@@ -162,6 +161,8 @@ int main(int argc, char** argv) {
     // random selection
 
     if(number_positive <=0) continue;
+    LOG(INFO)<<"prune size: "<< prune.size();
+    if(prune.size() ==0) continue;
 
     
     for(int j = 0; j < number_positive; ++ j ){
@@ -175,7 +176,7 @@ int main(int argc, char** argv) {
       string out;
       CHECK(datum.SerializeToString(&out));
       txn->Put(key_str, out);
-            //LOG(INFO)<<"read Memory";
+      //LOG(INFO)<<"read Memory";
       if(++count % 1000 ==0){
           txn->Commit();
           txn.reset(db->NewTransaction());

@@ -65,7 +65,23 @@ I0701 07:43:40.058307  4827 test_dataset.cpp:45] recall: 0.435019
 
 ## Canny + MSER: merge using bounding box
 
+I0701 08:39:47.810395  5855 test_dataset.cpp:54] recall: 0.337443
 
+I0701 08:39:49.555240  5855 test_dataset.cpp:54] recall: 0.318011
+
+I0701 08:39:51.275190  5855 test_dataset.cpp:54] recall: 0.301087
+
+I0701 08:39:53.025589  5855 test_dataset.cpp:54] recall: 0.288759
+
+I0701 08:39:54.758797  5855 test_dataset.cpp:54] recall: 0.27664
+
+I0701 08:39:56.460973  5855 test_dataset.cpp:54] recall: 0.25888
+
+I0701 08:39:58.178390  5855 test_dataset.cpp:54] recall: 0.207271
+
+I0701 08:39:59.881541  5855 test_dataset.cpp:54] recall: 0.108441
+
+I0701 08:40:01.686852  5855 test_dataset.cpp:54] recall: 0.0305056
 
 
 ## Test dataset

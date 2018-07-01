@@ -92,7 +92,7 @@ int main(int argc, char** argv){
                     label = std::to_string(map_string2int.size()-1);
                 }
 
-                ofs << std::to_string(cnt)+".png "<<label << std::endl;
+                ofs <<std::to_string(folder_name)+"/"+ std::to_string(cnt)+".png "<<label << std::endl;
                 ++ cnt;
                 if(cnt %100 ==0){
 
@@ -111,7 +111,7 @@ int main(int argc, char** argv){
             cv::resize(sub,sub,Size(resize_width, resize_height));
             //cv::imshow("bk", sub);
             //cv::waitKey(1);
-            int folder_name = 0;
+ //           int folder_name = 0;
             if(cnt % number_files ==0){
                 folder_name = cnt / number_files;
                 boost::filesystem::path dir(path+"/"+std::to_string(folder_name));

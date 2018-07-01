@@ -11,6 +11,7 @@
 #include "utils/visualization.hpp"
 #include "proposals/Proposal.hpp"
 #include "proposals/CannyProposal.hpp"
+#include <boost/filesystem.hpp>
 
 
 using namespace std;
@@ -43,7 +44,7 @@ int main(int argc, char** argv){
     int cnt = 0;
     ofstream ofs("label.txt");
 
-
+    int number_files = 10000;
 
     for(int i = 0; i < dataset->size(); ++ i){
         LOG(INFO)<< i << " th images";
@@ -59,6 +60,8 @@ int main(int argc, char** argv){
         //visualize(img, prune, Scalar(0,0,255));
         //cv::imshow("src", img);
         //cv::waitKey(0);
+        //int cnt = 0;
+
         for(auto ano : annotation){
             for(auto box : ano){            
                 Box b = expand_box(box, 1.2, height, width);
@@ -67,7 +70,15 @@ int main(int argc, char** argv){
                 cv::resize(sub,sub,Size(resize_width, resize_height));
                 
                 cv::imshow("des", sub);
-                string name = path + "/" + std::to_string(cnt)+".png";
+                int folder_name = 0;
+                if(cnt % number_files ==0){
+                    folder_name = cnt / number_files;
+                    boost::filesystem::path dir(path+"/"+std::to_string(folder_name));
+	                if(boost::filesystem::create_directory(dir)) {
+		                std::cout << "create " << path << std::to_string(folder_name) <<"\n";
+	                }
+                }
+                string name = path + "/" + std::to_string(folder_name)+"/"+std::to_string(cnt)+".png";
                 //for(int j = 0; j < b.label_name_.size(); ++ j){
                 //    LOG(INFO)<<b.label_name_[j];
                 //}
@@ -80,6 +91,7 @@ int main(int argc, char** argv){
                 }else{
                     label = std::to_string(map_string2int.size()-1);
                 }
+
                 ofs << std::to_string(cnt)+".png "<<label << std::endl;
                 ++ cnt;
                 if(cnt %100 ==0){
@@ -99,8 +111,17 @@ int main(int argc, char** argv){
             cv::resize(sub,sub,Size(resize_width, resize_height));
             cv::imshow("bk", sub);
             cv::waitKey(1);
-            string name = path + "/" + std::to_string(cnt)+".png";
-            ofs << std::to_string(cnt)+".png "<< std::to_string(map_string2int.size()-1) << std::endl;
+            int folder_name = 0;
+            if(cnt % number_files ==0){
+                folder_name = cnt / number_files;
+                boost::filesystem::path dir(path+"/"+std::to_string(folder_name));
+	            if(boost::filesystem::create_directory(dir)) {
+		            std::cout << "create " << path << std::to_string(folder_name) <<"\n";
+	            }
+            }
+            string name = path + "/" + std::to_string(folder_name)+"/"+std::to_string(cnt)+".png";
+            //string name = path + "/" + std::to_string(cnt)+".png";
+            ofs << std::to_string(folder_name)+"/"+std::to_string(cnt)+".png "<< std::to_string(map_string2int.size()-1) << std::endl;
             ++ cnt;
             if(cnt % 100 ==0){
                 LOG(INFO)<<"cnt: "<<cnt;

@@ -41,10 +41,10 @@ namespace kurff{
                         continue;
                     }
 
+                    Box box_new = expand_box(box, 1.2, image.rows, image.cols);
+
                     //Box box_new;
-
-
-                    proposals.push_back(box);
+                    proposals.push_back(box_new);
                 }
 
 

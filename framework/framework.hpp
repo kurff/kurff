@@ -25,6 +25,7 @@ namespace kurff{
 
             void run(const Mat& image, vector<Box>& result){
                 proposal_->run(image, result);
+                
                 model_->run(image, result);
             }
 

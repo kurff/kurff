@@ -193,8 +193,15 @@ Box expand_box(const Box& box, float ratio, int height, int width){
     //LOG(INFO)<< width <<" "<<height;
     return box_new;
 
+}
 
-
+void clean_boxes(vector<Box>& box){
+    for(int i = box.size()-1 ; i >=0; -- i){
+        //LOG(INFO)<< box[i].top_pred_[0].name_;
+        if(box[i].top_pred_[0].name_.empty()){
+            box.erase(box.begin()+i);
+        }
+    }
 
 }
 

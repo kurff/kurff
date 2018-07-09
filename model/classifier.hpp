@@ -31,8 +31,11 @@ namespace kurff{
                     obj.top_pred_.resize(this->top_k_);
                     //LOG(INFO)<<"top k"<< this->top_k_;
                     //int cnt = 0;
+                    if(label[0] == map_int2string.size() - 1) 
+                        continue;
                     for(int i = 0; i < this->top_k_; ++ i ){
                         //Top top;
+
                         obj.top_pred_[i].confidence_ = confidence[i];
                         //top.confidence_ = confidence[i];
                         //top.predict_ = label[i];

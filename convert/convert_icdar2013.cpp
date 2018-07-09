@@ -11,6 +11,7 @@
 #include "utils/visualization.hpp"
 #include "proposals/Proposal.hpp"
 #include "proposals/CannyProposal.hpp"
+#include "utils/random.hpp"
 #include <boost/filesystem.hpp>
 
 
@@ -46,6 +47,9 @@ int main(int argc, char** argv){
 
     int number_files = 10000;
     int folder_name = 0;
+
+    int num_positive = 0; 
+    Random random;
     for(int i = 0; i < dataset->size(); ++ i){
         LOG(INFO)<< i << " th images";
         dataset->get(i, img, annotation);
@@ -61,10 +65,11 @@ int main(int argc, char** argv){
         //cv::imshow("src", img);
         //cv::waitKey(0);
         //int cnt = 0;
-
+        num_positive = 0;
         for(auto ano : annotation){
-            for(auto box : ano){            
-                Box b = expand_box(box, 1.2, height, width);
+            for(auto b : ano){
+                ++ num_positive;            
+                //Box b = expand_box(box, 1.2, height, width);
                 if( b.width<=0 || b.height <=0 ) continue;
                 cv::Mat sub = img(Rect(b.x, b.y, b.width, b.height));
                 cv::resize(sub,sub,Size(resize_width, resize_height));
@@ -84,7 +89,7 @@ int main(int argc, char** argv){
                 //}
                 //LOG(INFO)<< box.label_name_[0];
 
-                auto it = map_string2int.find(box.label_name_[0]);
+                auto it = map_string2int.find(b.label_name_[0]);
                 string label;
                 if(it != map_string2int.end()){
                     label = std::to_string(it->second);
@@ -104,9 +109,17 @@ int main(int argc, char** argv){
             }
         }
 
-        for(auto p : prune){
-            Box b = expand_box(p, 1.2, height, width);
-            if(b.width <=0 || b.height <=0 ) continue;
+        int num_negative = 0;
+        for(int j = 0; j < num_positive; ++ j){
+            //Box b = expand_box(p, 1.2, height, width);
+
+            ++ num_negative;
+
+            int index = random.Next(0, prune.size());
+
+            Box b = prune[index];
+            LOG(INFO)<< b.x <<" "<< b.y <<" "<< b.width <<" "<<b.height;
+            if(b.width <=0 || b.height <=0 || b.x <=0 || b.y <=0 ) continue;
             cv::Mat sub = img(Rect(b.x,b.y, b.width, b.height));
             cv::resize(sub,sub,Size(resize_width, resize_height));
             //cv::imshow("bk", sub);

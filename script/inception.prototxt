@@ -11,7 +11,7 @@ layer {
   top: "data"
   top: "label"
   data_param{
-    source: "./build/icdar2013_sub_classifier"
+    source: "./build/icdar_classifier"
     # type of DB: LEVELDB or LMDB (LMDB supports concurrent reads)
     backend: LMDB
     # batch processing improves efficiency.
@@ -33,7 +33,7 @@ layer {
   top: "data"
   top: "label"
   data_param{
-    source: "./build/icdar2013_sub_classifier_val"
+    source: "./build/icdar_classifier_val/"
     # type of DB: LEVELDB or LMDB (LMDB supports concurrent reads)
     backend: LMDB
     # batch processing improves efficiency.

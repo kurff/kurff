@@ -27,7 +27,7 @@ void visualize(Mat& img, const vector<Box>& boxes, Scalar scalar, bool show_text
                 //LOG(INFO)<<"show text";
                 //if(top.name_ != "neg")
                 if(top.predict_ != 62)
-                putText(img, top.name_, cvPoint(box.x-5, box.y-5), FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0,0,250), 2, CV_AA);
+                putText(img, top.name_, cvPoint(box.x-5, box.y-5), FONT_HERSHEY_COMPLEX_SMALL, 1.2, cvScalar(0,0,250), 2, CV_AA);
                 
                 
             }

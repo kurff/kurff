@@ -20,7 +20,7 @@ namespace kurff{
                 cv::Mat gray;                
                 cvtColor(image, gray, CV_BGR2GRAY);
                 int number;                
-                xy* keypoints = fast9_detect_nonmax(gray.ptr(),gray.cols,gray.rows,gray.cols,50,&number);               
+                xy* keypoints = fast9_detect_nonmax(gray.ptr(),gray.cols,gray.rows,gray.cols,10,&number);               
                 proposals.clear();
                 for(int i = 0; i < number; ++ i){
                     Box box;

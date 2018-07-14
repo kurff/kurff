@@ -6,6 +6,7 @@
 #include "proposals/Proposal.hpp"
 #include "opencv2/opencv.hpp"
 #include "glog/logging.h"
+#include "utils/utils.hpp"
 namespace kurff{    
     class MSERProposal: public Proposal{
         public:
@@ -24,16 +25,15 @@ namespace kurff{
                 cv::Mat inverse = 255-gray;
                 mser4_->operator()(inverse.ptr(), gray.cols, gray.rows, region4_);
                 proposals.clear();
-                convert(region8_, proposals);
-                LOG(INFO)<< proposals[0].x<<" "<< proposals[0].y;
-
-                convert(region4_, proposals);
-                LOG(INFO)<<"8: "<< proposals.size();
+                convert(region8_, proposals, image.rows, image.cols);
+                //LOG(INFO)<< proposals[0].x<<" "<< proposals[0].y;
+                convert(region4_, proposals, image.rows, image.cols);
+                //LOG(INFO)<<"8: "<< proposals.size();
                 
             }
 
         protected:
-            void convert(const vector<kurff::MSER::Region>& region, vector<Box>& proposals){    
+            void convert(const vector<kurff::MSER::Region>& region, vector<Box>& proposals, int height, int width){    
                 for(auto reg : region){
                     double x = reg.moments_[0]/ reg.area_;
                     double y = reg.moments_[1]/ reg.area_;
@@ -50,14 +50,20 @@ namespace kurff{
 	                const double e0sq = sqrt(e0);
                     const double e1sq = sqrt(e1);
                     const double maxR = std::max(e0sq,e1sq);
+                    CHECK_GT(maxR, 0);
                     Box box;
-                    box.x = std::max(x - 2*maxR,0.0);
-                    box.y = std::max(y - 2*maxR,0.0);
-                    box.height = 4*maxR;
-                    box.width = 4*maxR;
-                    //LOG(INFO)<<box.x<<" "<<box.y<<" "<<box.height<<" "<<box.width;
-                    proposals.push_back(box);
+                    box.x = std::max<int>(x - 2*maxR,0);
+                    box.y = std::max<int>(y - 2*maxR,0.0);
 
+                    int x1 = std::min<int>(box.x + 4*maxR, (width-1));
+                    int y1 = std::min<int>(box.y + 4*maxR, (height-1));
+                    box.height = y1 - box.y;
+                    box.width =  x1 - box.x;
+                    //Box box_new = expand_box(box, 1.2, height, width);
+                    if(check_box(box, height, width)){
+                        proposals.push_back(box);
+                    }   
+                    //LOG(INFO)<<box.x<<" "<<box.y<<" "<<box.height<<" "<<box.width;
                 }
 
             }

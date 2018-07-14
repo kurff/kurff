@@ -57,5 +57,8 @@ add_executable(convert_icdar2013 convert/convert_icdar2013.cpp)
 target_link_libraries(convert_icdar2013 opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc boost_system boost_filesystem  glog gflags)
 
 
-add_executable(convert_sub convert/convert_sub_image.cpp)
-target_link_libraries(convert_sub caffe opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc  glog gflags boost_filesystem boost_system)
+add_executable(convert_pos_neg convert/convert_pos_neg_image.cpp proposals/mser/mser.cpp)
+target_link_libraries(convert_pos_neg caffe opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc  glog gflags boost_filesystem boost_system)
+
+add_executable(test_example test/test_example.cpp)
+target_link_libraries(test_example opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc boost_system boost_filesystem  glog gflags)

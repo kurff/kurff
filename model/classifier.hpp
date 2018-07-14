@@ -22,8 +22,14 @@ namespace kurff{
                 Mat sub;
                 vector<float> confidence;
                 vector<int> label;
+                int height = image.rows;
+                int width = image.cols;
                 for(auto& obj : objects){
-                    sub = image(Rect(obj.x, obj.y, obj.width, obj.height));
+                    CHECK_GE(obj.x, 0);
+                    CHECK_GE(obj.y, 0);
+                    CHECK_LT(obj.x + obj.width, width);
+                    CHECK_LT(obj.y + obj.height, height);
+                    sub = image(Rect(obj.x, obj.y, obj.width, obj.height));    
                     run_each(sub, confidence, label);
                     //LOG(INFO)<<"confidence: "<<confidence[0] <<" label: "<< label[0];
                     //cv::imshow("classifier", sub);

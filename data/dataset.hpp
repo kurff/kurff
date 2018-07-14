@@ -47,6 +47,11 @@ namespace kurff{
                 return img;
             }
 
+            string get_file(int index){
+                assert(index>=0 && index < files_.size());
+                return files_[index];
+            }
+
             void get(int index, cv::Mat& image, vector<vector<Box> >& boxes ){
                assert(index>=0 && index < files_.size());
                 auto it = dataset_.find(files_[index]);

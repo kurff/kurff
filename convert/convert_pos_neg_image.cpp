@@ -11,6 +11,7 @@
 #include "utils/visualization.hpp"
 #include "proposals/Proposal.hpp"
 #include "proposals/CannyProposal.hpp"
+#include "proposals/MSERProposal.hpp"
 #include "utils/random.hpp"
 #include <boost/filesystem.hpp>
 
@@ -60,15 +61,21 @@ int main(int argc, char** argv){
         vector<Box> proposals;
         canny->run(img, proposals);
 
+        vector<Box> mser_proposals;
+        mser->run(img, mser_proposals);
+
         vector<Box> prune;
         overlap(proposals, annotation, 0.1, prune );
-        //visualize(img, prune, Scalar(0,0,255));
-        //cv::imshow("src", img);
-        //cv::waitKey(0);
+
+        vector<Box> positive;
+        overlap_positive(mser_proposals, annotation, 0.1, positive);
+        visualize(img, positive, Scalar(0,0,255));
+        cv::imshow("src", img);
+        cv::waitKey(0);
         //int cnt = 0;
         num_positive = 0;
-        for(auto ano : annotation){
-            for(auto b : ano){
+
+        for(auto b : positive){
                 ++ num_positive;            
                 //Box b = expand_box(box, 1.2, height, width);
                 //if( b.width<=0 || b.height <=0 ) continue;
@@ -108,8 +115,8 @@ int main(int argc, char** argv){
                 }
                 cv::imwrite(name, sub);
                 //cv::waitKey(1);
-            }
         }
+        
 
         int num_negative = 0;
         for(int j = 0; j < 3*num_positive; ++ j){
@@ -152,10 +159,4 @@ int main(int argc, char** argv){
     }
 
     ofs.close();
-
-
-
-
-
-
 }

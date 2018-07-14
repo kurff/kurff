@@ -14,7 +14,8 @@ namespace kurff{
     class Framework{
         public:
             Framework(){
-                proposal_=ProposalRegistry()->Create("CannyProposal", 200);
+                canny_=ProposalRegistry()->Create("CannyProposal", 200);
+                mser_ = ProposalRegistry()->Create("MSERProposal",100);
                 model_=ModelRegistry()->Create("Classifier",1);
                 model_->init("../script/deploy.prototxt","../build/_iter_10000.caffemodel",1);
             }
@@ -24,13 +25,18 @@ namespace kurff{
 
 
             void run(const Mat& image, vector<Box>& result){
-                proposal_->run(image, result);
-                
+                canny_->run(image, result);
+                LOG(INFO)<<"canny proposal: "<< result.size();
+                vector<Box> mser_boxes;
+                mser_->run(image, mser_boxes);
+                LOG(INFO)<<"mser proposal: "<< mser_boxes.size();
+                result.insert(result.end(), mser_boxes.begin(), mser_boxes.end());
                 model_->run(image, result);
             }
 
         protected:
-            std::shared_ptr<Proposal> proposal_;
+            std::shared_ptr<Proposal> canny_;
+            std::shared_ptr<Proposal> mser_;
             std::shared_ptr<Model> model_;
 
     };

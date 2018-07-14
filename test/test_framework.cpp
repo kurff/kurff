@@ -35,7 +35,7 @@ int main(int argc, char* argv[]){
     std::shared_ptr<Proposal> mser (ProposalRegistry()->Create("MSERProposal",100));
     std::shared_ptr<Proposal> canny (ProposalRegistry()->Create("CannyProposal",100));
     //std::shared_ptr<Proposal> fast (ProposalRegistry()->Create("FASTProposal", 100));
-    Merge* merge = new Merge();
+
     dataset->load("icdar2013.txt");
     for(int i = 0; i < dataset->size(); ++ i){
         //dataset->show(i);
@@ -44,26 +44,30 @@ int main(int argc, char* argv[]){
         // = dataset->get(i);
         vector<vector<Box> > annotation;
         dataset->get(i, img, annotation);
-        //vector<Box> mser_boxes;
-        //mser->run(img, mser_boxes);
+        vector<Box> mser_boxes;
         vector<Box> canny_boxes;
-        canny->run(img, canny_boxes);
+        //mser->run(img, canny_boxes);
+        
+        //canny->run(img, canny_boxes);
         //vector<Box> fast_boxes;
         //fast->run(img, fast_boxes);
         //overlap(mser_boxes, annotation);
         //canny_boxes.insert(canny_boxes.begin(), mser_boxes.begin(), mser_boxes.end());
+
+        LOG(INFO)<< "size of proposal: "<< canny_boxes.size();
         framework->run(img, canny_boxes);
         clean_boxes(canny_boxes);
+        LOG(INFO)<<" size of predict: "<< canny_boxes.size();
         dataset->push_proposals(i, canny_boxes);
         //overlap(canny_boxes, annotation);
         //LOG(INFO)<<"test overlap" << overlap(mser_boxes[0], mser_boxes[0]);
-
-        //visualize(img, canny_boxes, Colors::GreenYellow, true);
-
+        string name = dataset->get_file(i);
+        visualize(img, canny_boxes, Colors::GreenYellow, true);
         //visualize<Box>(vis_mser, mser_boxes, Colors::Green);
         //cv::imshow("mser", img);
-        //cv::waitKey(1);
-        //cv::imwrite("mser/"+std::to_string(i)+".png", vis_mser);
+        //cv::waitKey(0);
+
+        cv::imwrite("mser_canny_framework/"+name+".png", img);
     }
     for(float r = 0.1f; r < 1.0f; r += 0.1){
         LOG(INFO)<<"recall: "<<dataset->evaluate(r);

@@ -24,31 +24,44 @@ int main(){
         vector<vector<Box> > annotation;
         dataset->get(i, img, annotation);
         vector<Box> mser_boxes;
+        
         mser->run(img, mser_boxes);
         vector<Box> canny_boxes;
         canny->run(img, canny_boxes);
-        //vector<Box> fast_boxes;
-        //fast->run(img, fast_boxes);
+        vector<Box> fast_boxes;
+        fast->run(img, fast_boxes);
         //overlap(mser_boxes, annotation);
 
         //canny_boxes.insert(canny_boxes.begin(), mser_boxes.begin(), mser_boxes.end());
         
-        vector<Box> prune;
-        merge->merge(canny_boxes, mser_boxes, prune); 
+        //vector<Box> prune;
+        //merge->merge(canny_boxes, mser_boxes, prune); 
         
-        dataset->push_proposals(i, prune);
+        //dataset->push_proposals(i, prune);
 
 
         //overlap(canny_boxes, annotation);
         //LOG(INFO)<<"test overlap" << overlap(mser_boxes[0], mser_boxes[0]);
         cv::Mat vis_mser;
         img.copyTo(vis_mser);
-        //visualize<Box>(vis_mser, canny_boxes, Colors::Red);
+        visualize(vis_mser, mser_boxes, Colors::Red);
 
+        cv::Mat vis_canny;
+        img.copyTo(vis_canny);
+        visualize(vis_canny, canny_boxes, Colors::Yellow);
+
+        cv::Mat vis_fast;
+        img.copyTo(vis_fast);
+        visualize(vis_fast, fast_boxes, Colors::Blue);
         //visualize<Box>(vis_mser, mser_boxes, Colors::Green);
         //cv::imshow("mser", vis_mser);
         //cv::waitKey(0);
-        //cv::imwrite("mser/"+std::to_string(i)+".png", vis_mser);
+        cv::imwrite("fast/"+std::to_string(i)+".png", vis_fast);
+        cv::imwrite("canny/"+std::to_string(i)+".png", vis_canny);
+        cv::imwrite("mser/"+std::to_string(i)+".png", vis_mser);
+
+
+
     }
     for(float r = 0.1f; r < 1.0f; r += 0.1){
         LOG(INFO)<<"recall: "<<dataset->evaluate(r);

@@ -84,4 +84,24 @@ I0701 08:39:59.881541  5855 test_dataset.cpp:54] recall: 0.108441
 I0701 08:40:01.686852  5855 test_dataset.cpp:54] recall: 0.0305056
 
 
-## Test dataset
+## train dataset : test framework + classifier
+## canny proposal + classifier
+
+I0709 22:23:36.595604  7614 test_framework.cpp:69] recall: 0.645633
+
+I0709 22:23:36.965389  7614 test_framework.cpp:69] recall: 0.632679
+
+I0709 22:23:37.334874  7614 test_framework.cpp:69] recall: 0.615963
+
+I0709 22:23:37.707973  7614 test_framework.cpp:69] recall: 0.597785
+
+I0709 22:23:38.078042  7614 test_framework.cpp:69] recall: 0.565608
+
+I0709 22:23:38.447154  7614 test_framework.cpp:69] recall: 0.479315
+
+I0709 22:23:38.816648  7614 test_framework.cpp:69] recall: 0.0541162
+
+I0709 22:23:39.185767  7614 test_framework.cpp:69] recall: 0.00773088
+
+I0709 22:23:39.555016  7614 test_framework.cpp:69] recall: 0.000835771
+

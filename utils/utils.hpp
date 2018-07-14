@@ -83,6 +83,29 @@ vector<Box>& prune ){
     }
 }
 
+
+
+void overlap_positive(const vector<Box>& proposal, const vector<vector<Box> >& bounding_box, float threshold,
+vector<Box>& prune ){
+    //LOG(INFO)<<"";
+    prune.clear();
+    for(auto prop : proposal){
+        float o = 0.0f;
+        float ov = 0.0f;
+        for(auto box : bounding_box){
+            for(auto b: box){
+                ov = overlap(prop, b);
+                if( o <= ov){
+                    o = ov;
+                }
+            }
+        }
+        if(o >= threshold){
+            prune.push_back(prop);
+        }
+    }
+}
+
 // return the index of overlapping index
 // the size of index is same to proposal
 
@@ -192,6 +215,15 @@ Box expand_box(const Box& box, float ratio, int height, int width){
     //LOG(INFO)<<" "<<width_box<<" "<<height_box;
     //LOG(INFO)<< width <<" "<<height;
     return box_new;
+}
+
+bool check_box(const Box& box, int height, int width){
+    if(box.x <0 || box.x >= width || box.y < 0 || box.y >= height || box.width <=0 || box.width >= width
+    || box.height <=0 || box.height >= height || box.x + box.width >= width || box.y + box.height >= height){
+        return false;
+    }else{
+        return true;
+    }
 
 }
 

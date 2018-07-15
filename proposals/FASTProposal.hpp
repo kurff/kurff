@@ -9,7 +9,7 @@ namespace kurff{
         public:
 
             FASTProposal(int number_proposals):Proposal(number_proposals){
-               
+                this->name_="FAST";
             }
             ~FASTProposal(){
 

@@ -62,3 +62,7 @@ target_link_libraries(convert_pos_neg caffe opencv_core opencv_highgui opencv_im
 
 add_executable(test_example test/test_example.cpp)
 target_link_libraries(test_example opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc boost_system boost_filesystem  glog gflags)
+
+add_executable(test_proposal_gen test/test_proposal_gen.cpp proposals/mser/mser.cpp utils/colors.cpp)
+target_link_libraries(test_proposal_gen fast opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc boost_system boost_filesystem  glog gflags)
+

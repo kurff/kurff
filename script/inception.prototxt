@@ -15,7 +15,7 @@ layer {
     # type of DB: LEVELDB or LMDB (LMDB supports concurrent reads)
     backend: LMDB
     # batch processing improves efficiency.
-    batch_size: 32
+    batch_size: 64
   }
   transform_param {
     # feature scaling coefficient: this maps the [0, 255] MNIST data to [0, 1]
@@ -37,7 +37,7 @@ layer {
     # type of DB: LEVELDB or LMDB (LMDB supports concurrent reads)
     backend: LMDB
     # batch processing improves efficiency.
-    batch_size: 32
+    batch_size: 64
   }
   transform_param {
     # feature scaling coefficient: this maps the [0, 255] MNIST data to [0, 1]

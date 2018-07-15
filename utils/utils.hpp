@@ -92,15 +92,18 @@ vector<Box>& prune ){
     for(auto prop : proposal){
         float o = 0.0f;
         float ov = 0.0f;
+        string name;
         for(auto box : bounding_box){
             for(auto b: box){
                 ov = overlap(prop, b);
                 if( o <= ov){
                     o = ov;
+                    name = b.label_name_[0];
                 }
             }
         }
         if(o >= threshold){
+            prop.label_name_.push_back(name);
             prune.push_back(prop);
         }
     }

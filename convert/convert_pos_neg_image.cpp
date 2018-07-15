@@ -27,6 +27,7 @@ DEFINE_string(path, "./icdar2013/",
         "the save path of image");
 DEFINE_int32(resize_width, 64, "Width images are resized to");
 DEFINE_int32(resize_height, 64, "Height images are resized to");
+DEFINE_double(overlap_ratio, 0.3, "overlap ratio");
 
 int main(int argc, char** argv){
     gflags::ParseCommandLineFlags(&argc, &argv, true);
@@ -47,11 +48,12 @@ int main(int argc, char** argv){
     int cnt = 0;
     ofstream ofs("label.txt");
 
-    int number_files = 10000;
+    int number_files = 40000;
     int folder_name = 0;
 
     int num_positive = 0; 
     Random random;
+
     for(int i = 0; i < dataset->size(); ++ i){
         LOG(INFO)<< i << " th images";
         dataset->get(i, img, annotation);
@@ -65,13 +67,14 @@ int main(int argc, char** argv){
         mser->run(img, mser_proposals);
 
         vector<Box> prune;
-        overlap(proposals, annotation, 0.1, prune );
-
+        overlap(proposals, annotation, FLAGS_overlap_ratio, prune );
         vector<Box> positive;
-        overlap_positive(mser_proposals, annotation, 0.1, positive);
-        visualize(img, positive, Scalar(0,0,255));
-        cv::imshow("src", img);
-        cv::waitKey(0);
+        overlap_positive(mser_proposals, annotation, FLAGS_overlap_ratio, positive);
+        cv::Mat vis;
+        img.copyTo(vis);
+        visualize(vis, positive, Scalar(0,0,255));
+        cv::imshow("src", vis);
+        cv::waitKey(1);
         //int cnt = 0;
         num_positive = 0;
 
@@ -99,7 +102,7 @@ int main(int argc, char** argv){
                 //    LOG(INFO)<<b.label_name_[j];
                 //}
                 //LOG(INFO)<< box.label_name_[0];
-
+                LOG(INFO)<<"save image";
                 auto it = map_string2int.find(b.label_name_[0]);
                 string label;
                 if(it != map_string2int.end()){
@@ -107,7 +110,7 @@ int main(int argc, char** argv){
                 }else{
                     label = std::to_string(map_string2int.size()-1);
                 }
-
+                LOG(INFO)<<"save image";
                 ofs <<std::to_string(folder_name)+"/"+ std::to_string(cnt)+".png "<<label << std::endl;
                 ++ cnt;
                 if(cnt %100 ==0){
@@ -128,7 +131,7 @@ int main(int argc, char** argv){
             int index = random.Next(0, prune.size());
 
             Box b = prune[index];
-            LOG(INFO)<< b.x <<" "<< b.y <<" "<< b.width <<" "<<b.height;
+            //LOG(INFO)<< b.x <<" "<< b.y <<" "<< b.width <<" "<<b.height;
             //if(b.width <=0 || b.height <=0 || b.x <0 || b.y <0 ) continue;
             if(!check_box(b, img.rows, img.cols)){
                 continue;

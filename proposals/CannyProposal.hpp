@@ -9,7 +9,7 @@ namespace kurff{
         public:
             CannyProposal(int number_proposals, int ratio = 3, int lowThreshold = 20, int kernel_size = 3): Proposal(number_proposals)
             , ratio_(ratio), lowThreshold_(lowThreshold), kernel_size_(kernel_size), ratio_size_(1.2f){
-
+                this->name_="Canny";
             }
             ~CannyProposal(){
 

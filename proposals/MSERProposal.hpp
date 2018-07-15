@@ -13,6 +13,7 @@ namespace kurff{
             MSERProposal(int number_proposals): Proposal(number_proposals){
                 mser8_.reset(new kurff::MSER(2, 0.0001, 0.1, 0.5, 0.5, true));
                 mser4_.reset(new kurff::MSER(2,0.0001,0.1,0.5,0.5,false));
+                this->name_ = "MSER";
             }
             ~MSERProposal(){
 

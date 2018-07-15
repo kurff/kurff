@@ -15,8 +15,9 @@ namespace kurff{
 
             }
             int number_proposals(){return number_proposals_;}
-
+            string name(){return name_;}
             virtual void run(const Mat& image, vector<Box>& proposals) = 0;
+            
         protected:
             int number_proposals_;
             string name_;

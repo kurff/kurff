@@ -16,6 +16,7 @@ namespace kurff{
             }
             ~MSERProposal(){
 
+                
             }
 
             void run(const Mat& image, vector<Box>& proposals){

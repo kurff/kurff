@@ -66,10 +66,13 @@ int main(int argc, char** argv){
         vector<Box> mser_proposals;
         mser->run(img, mser_proposals);
 
+        proposals.insert(proposals.end(), mser_proposals.begin(), mser_proposals.end());
+
+
         vector<Box> prune;
         overlap(proposals, annotation, FLAGS_overlap_ratio, prune );
         vector<Box> positive;
-        overlap_positive(mser_proposals, annotation, FLAGS_overlap_ratio, positive);
+        overlap_positive(proposals, annotation, FLAGS_overlap_ratio, positive);
         cv::Mat vis;
         img.copyTo(vis);
         visualize(vis, positive, Scalar(0,0,255));

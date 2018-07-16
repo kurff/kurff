@@ -34,6 +34,14 @@ namespace kurff{
                 model_->run(image, result);
             }
 
+
+            void run_given_box(const Mat& image, vector<Box>& result){
+                model_->run(image, result);
+            }
+
+
+
+
         protected:
             std::shared_ptr<Proposal> canny_;
             std::shared_ptr<Proposal> mser_;
@@ -46,7 +54,7 @@ namespace kurff{
             CascadeFramework(){
                 proposal_=ProposalRegistry()->Create("CannyProposal", 200);
                 regression_=ModelRegistry()->Create("Regression",1);
-                regression_->init("../script/deploy.prototxt","../build/_iter_10000.caffemodel",1);
+                regression_->init("../script/deploy.prototxt","../build/_iter_95000.caffemodel",1);
             }
             ~CascadeFramework(){
 

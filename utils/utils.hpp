@@ -193,6 +193,11 @@ vector<int> sort_index(const vector<float>& confidence){
 }
 
 
+bool compare_function(const Box& box1, const Box& box2){
+    return box1.top_pred_[0].confidence_ > box2.top_pred_[0].confidence_;
+}
+
+
 
 Box expand_box(const Box& box, float ratio, int height, int width){
     float cx = float(box.x) + float(box.width)/2.0f;

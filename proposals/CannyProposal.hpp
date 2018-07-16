@@ -17,13 +17,13 @@ namespace kurff{
 
             void run(const Mat& image, vector<Box>& proposals){
                 cv::Mat gray;
-
-                //LOG(INFO)<< "row: "<< image.rows;
-                cvtColor( image, gray, CV_BGR2GRAY );
-
                 cv::Mat edges;
-                blur( gray, edges, Size(3,3) );
-                Canny( edges, edges, 20, 100, kernel_size_ );
+                //LOG(INFO)<< "row: "<< image.rows;
+
+            
+                cvtColor( image, gray, CV_BGR2GRAY );                
+                Canny( gray, edges, 20, 100, kernel_size_ );
+
 
 
                 cv::Mat labels, stats, centroids;

@@ -64,8 +64,8 @@ int main(int argc, char* argv[]){
         string name = dataset->get_file(i);
         visualize(img, canny_boxes, Colors::GreenYellow, true);
         //visualize<Box>(vis_mser, mser_boxes, Colors::Green);
-        //cv::imshow("mser", img);
-        //cv::waitKey(0);
+        cv::imshow("mser", img);
+        cv::waitKey(1);
 
         cv::imwrite("mser_canny_framework/"+name+".png", img);
     }

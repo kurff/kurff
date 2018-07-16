@@ -56,12 +56,22 @@ target_link_libraries(convert_classifier opencv_core opencv_highgui opencv_imgco
 add_executable(convert_icdar2013 convert/convert_icdar2013.cpp)
 target_link_libraries(convert_icdar2013 opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc boost_system boost_filesystem  glog gflags)
 
+add_executable(convert_hard_mining convert/convert_hard_mining.cpp proposals/mser/mser.cpp)
+target_link_libraries(convert_hard_mining caffe boost_system boost_filesystem opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc boost_system boost_filesystem  glog gflags)
+
+
 
 add_executable(convert_pos_neg convert/convert_pos_neg_image.cpp proposals/mser/mser.cpp)
 target_link_libraries(convert_pos_neg caffe opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc  glog gflags boost_filesystem boost_system)
 
 add_executable(test_example test/test_example.cpp)
 target_link_libraries(test_example opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc boost_system boost_filesystem  glog gflags)
+
+
+add_executable(compare_two_image test/compare_two_image.cpp)
+target_link_libraries(compare_two_image opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc )
+
+
 
 add_executable(test_proposal_gen test/test_proposal_gen.cpp proposals/mser/mser.cpp utils/colors.cpp)
 target_link_libraries(test_proposal_gen fast opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc boost_system boost_filesystem  glog gflags)

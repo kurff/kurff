@@ -1,90 +1,40 @@
 
-// This program converts a set of images to a lmdb/leveldb by storing them
-// as Datum proto buffers.
-// Usage:
-//   convert_imageset [FLAGS] ROOTFOLDER/ LISTFILE DB_NAME
-//
-// where ROOTFOLDER is the root folder that holds all the images, and LISTFILE
-// should be a list of files as well as their labels, in the format as
-//   subfolder1/file1.JPEG 7
-//   ....
-#define USE_OPENCV
-#include <algorithm>
-#include <fstream>  // NOLINT(readability/streams)
+#include "opencv2/opencv.hpp"
+#include <fstream>
 #include <string>
-#include <utility>
-#include <vector>
-
-#include "boost/scoped_ptr.hpp"
-#include "gflags/gflags.h"
-#include "glog/logging.h"
-
-#include "caffe/proto/caffe.pb.h"
-#include "caffe/util/db.hpp"
-#include "caffe/util/format.hpp"
-#include "caffe/util/io.hpp"
-#include "caffe/util/rng.hpp"
-
+#include "utils/colors.h"
 #include "utils/utils.hpp"
 #include "data/dataset.hpp"
-#include "utils/visualization.hpp"
+#include "gflags/gflags.h"
+#include "glog/logging.h"
 #include "core/common.hpp"
+#include "utils/visualization.hpp"
 #include "proposals/Proposal.hpp"
 #include "proposals/CannyProposal.hpp"
-#include "convert/dataio.hpp"
+#include "proposals/MSERProposal.hpp"
+#include "utils/random.hpp"
+#include <boost/filesystem.hpp>
+#include "framework/framework.hpp"
 
-#include "model/classifier.hpp"
 
-
-using namespace caffe;  // NOLINT(build/namespaces)
+using namespace std;
+using namespace cv;
 using namespace kurff;
-using std::pair;
-using boost::scoped_ptr;
-DEFINE_bool(gray, false,
-    "When this option is on, treat images as grayscale ones");
-DEFINE_bool(shuffle, false,
-    "Randomly shuffle the order of images and their labels");
-DEFINE_string(backend, "lmdb",
-        "The backend {lmdb, leveldb} for storing the result");
+
+
+
+
+DEFINE_string(path, "./icdar2013_hard/",
+        "the save path of image");
 DEFINE_int32(resize_width, 64, "Width images are resized to");
 DEFINE_int32(resize_height, 64, "Height images are resized to");
-DEFINE_bool(check_size, false,
-    "When this option is on, check that all the datum have the same size");
-DEFINE_bool(encoded, false,
-    "When this option is on, the encoded image will be save in datum");
-DEFINE_string(encode_type, "",
-    "Optional: What type should we encode the image as ('png','jpg',...).");
+DEFINE_double(overlap_ratio, 0.1, "overlap ratio");
 
-DEFINE_string(lmdb_name, "icdar2013_sub_classifier", "save name of ");
-
-int main(int argc, char** argv) {
-#ifdef USE_OPENCV
-  ::google::InitGoogleLogging(argv[0]);
-  // Print output to stderr (while still logging)
-  FLAGS_alsologtostderr = 1;
-
-#ifndef GFLAGS_GFLAGS_H_
-  namespace gflags = google;
-#endif
-
-  gflags::SetUsageMessage("Convert a set of images to the leveldb/lmdb\n"
-        "format used as input for Caffe.\n"
-        "Usage:\n"
-        "    convert_imageset [FLAGS] ROOTFOLDER/ LISTFILE DB_NAME\n"
-        "The ImageNet dataset for the training demo is at\n"
-        "    http://www.image-net.org/download-images\n");
-  gflags::ParseCommandLineFlags(&argc, &argv, true);
-
-  if (argc < 4) {
-    gflags::ShowUsageWithFlagsRestrict(argv[0], "tools/convert_bin");
-    //return 1;
-  }
-
-  const bool is_color = !FLAGS_gray;
-  const bool check_size = FLAGS_check_size;
-  const bool encoded = FLAGS_encoded;
-  const string encode_type = FLAGS_encode_type;
-
+int main(int argc, char** argv){
+    gflags::ParseCommandLineFlags(&argc, &argv, true);
+    string path = FLAGS_path;
+    int resize_height = FLAGS_resize_height;
+    int resize_width = FLAGS_resize_width;
 
     string img_path="/media/kurff/d45400e1-76eb-453c-a31e-9ae30fafb7fd/data/ICDAR2013/Challenge2_Training_Task12_Images";
     string anno_path="/media/kurff/d45400e1-76eb-453c-a31e-9ae30fafb7fd/data/ICDAR2013/Challenge2_Training_Task2_GT";
@@ -92,105 +42,140 @@ int main(int argc, char** argv) {
     dataset->load("icdar2013.txt");
 
     std::shared_ptr<Proposal> canny (ProposalRegistry()->Create("CannyProposal",100));
+    std::shared_ptr<Proposal> mser(ProposalRegistry()->Create("MSERProposal",100));
+    std::shared_ptr<Framework> framework(new Framework());
 
-  //boost::is_directory();
-  int top_k = 1;
-  std::shared_ptr<Model > model = ModelRegistry()->Create("Classifier", top_k);
-  model->init("../script/deploy.prototxt","../build/_iter_4318.caffemodel",1);
- 
-  if (encode_type.size() && !encoded)
-    LOG(INFO) << "encode_type specified, assuming encoded=true.";
 
-  int resize_height = std::max<int>(0, FLAGS_resize_height);
-  int resize_width = std::max<int>(0, FLAGS_resize_width);
-
-  // Create new DB
-  boost::filesystem::path path(FLAGS_lmdb_name);
-  if(boost::filesystem::is_directory(path)){
-      boost::filesystem::remove_all(path);
-  }
-
-  vector<Box> proposals;
-
-  scoped_ptr<db::DB> db(db::GetDB(FLAGS_backend));
-  db->Open(FLAGS_lmdb_name, db::NEW);
-  scoped_ptr<db::Transaction> txn(db->NewTransaction());
-
-  // Storing to db
-  Datum datum;
-  int count = 0;
-  int data_size = 0;
-  int label = 0;
-  bool data_size_initialized = false;
     cv::Mat img;
     vector<vector<Box> > annotation;
-  for (int i = 0; i < dataset->size(); ++ i) {
-    bool status;
-    dataset->get(i, img, annotation);
-    for(int j =0; j < annotation.size(); ++ j){
-        for(int k = 0; k < annotation[j].size(); ++ k){
-            string label_name = annotation[j][k].label_name_[0];
-            int label = annotation[j][k].label_[0];
-            //LOG(INFO)<<"count: "<<count;
-            status = ReadMemoryToDatum(img, annotation[j][k], FLAGS_resize_height, FLAGS_resize_width, label, &datum);
-            if (status == false) continue;
-            //visualize(img, annotation, Scalar(0,0,255));
-            //cv::imshow("src",img);
-            //cv::waitKey(0);
-            
-            string key_str = std::to_string(count);
-            string out;
-            CHECK(datum.SerializeToString(&out));
-            txn->Put(key_str, out);
-            //LOG(INFO)<<"read Memory";
-            if(++count % 1000 ==0){
-                txn->Commit();
-                txn.reset(db->NewTransaction());
-                LOG(INFO) << "Processed " << count << " files.";
-            }
+    int cnt = 0;
+    ofstream ofs("label.txt");
 
+    int number_files = 40000;
+    int folder_name = 0;
+
+    int num_positive = 0; 
+    Random random;
+
+    for(int i = 0; i < dataset->size(); ++ i){
+        LOG(INFO)<< i << " th images";
+        dataset->get(i, img, annotation);
+        int height = img.rows;
+        int width = img.cols;
+
+        vector<Box> proposals;
+        canny->run(img, proposals);
+
+        vector<Box> mser_proposals;
+        mser->run(img, mser_proposals);
+
+        proposals.insert(proposals.end(), mser_proposals.begin(), mser_proposals.end());
+
+
+        vector<Box> prune;
+        overlap(proposals, annotation, FLAGS_overlap_ratio, prune );
+        vector<Box> positive;
+        overlap_positive(proposals, annotation, FLAGS_overlap_ratio, positive);
+        cv::Mat vis;
+        img.copyTo(vis);
+        visualize(vis, positive, Scalar(0,0,255));
+        cv::imshow("src", vis);
+        cv::waitKey(1);
+        //int cnt = 0;
+        num_positive = 0;
+
+        for(auto b : positive){
+                ++ num_positive;            
+                //Box b = expand_box(box, 1.2, height, width);
+                //if( b.width<=0 || b.height <=0 ) continue;
+                if(!check_box(b, img.rows, img.cols)){
+                    continue;
+                }
+                LOG(INFO)<< b.x <<" "<< b.y <<" "<< b.width <<" "<<b.height <<" "<< img.rows<<" "<<img.cols;
+                cv::Mat sub = img(Rect(b.x, b.y, b.width, b.height));
+                cv::resize(sub,sub,Size(resize_width, resize_height));
+                
+                //cv::imshow("des", sub);
+                if(cnt % number_files ==0){
+                    folder_name = cnt / number_files;
+                    boost::filesystem::path dir(path+"/"+std::to_string(folder_name));
+	                if(boost::filesystem::create_directory(dir)) {
+		                std::cout << "create " << path << std::to_string(folder_name) <<"\n";
+	                }
+                }
+                string name = path + "/" + std::to_string(folder_name)+"/"+std::to_string(cnt)+".png";
+                //for(int j = 0; j < b.label_name_.size(); ++ j){
+                //    LOG(INFO)<<b.label_name_[j];
+                //}
+                //LOG(INFO)<< box.label_name_[0];           
+                auto it = map_string2int.find(b.label_name_[0]);
+                string label;
+                if(it != map_string2int.end()){
+                    label = std::to_string(it->second);
+                }else{
+                    label = std::to_string(map_string2int.size()-1);
+                }
+                ofs <<std::to_string(folder_name)+"/"+ std::to_string(cnt)+".png "<<label << std::endl;
+                ++ cnt;
+                if(cnt %100 ==0){
+                    LOG(INFO)<<"cnt: "<<cnt;
+                }
+                cv::imwrite(name, sub);
+                //cv::waitKey(1);
         }
+        
+
+        framework->run_given_box(img, prune);
+        sort(prune.begin(), prune.end(), compare_function);
+        //cv::Mat vis;
+        // img.copyTo(vis);
+        // for(auto x : prune){
+        //     visualize(vis,x, Scalar(0,0,255), 1);
+        //     cv::imshow("src", vis);
+        //     cv::waitKey(0);
+        //     LOG(INFO)<< x.top_pred_[0].confidence_;
+        // }
+
+        int num_negative = 0;
+        for(int j = 0; j < prune.size(); ++ j){
+            //Box b = expand_box(p, 1.2, height, width);
+
+            ++ num_negative;
+
+            if(prune.size()<=0) continue;
+
+            //int index = random.Next(0, prune.size());
+            Box b = prune[j];
+            if(b.top_pred_[0].confidence_<=0.01) continue;
+            //LOG(INFO)<< b.x <<" "<< b.y <<" "<< b.width <<" "<<b.height;
+            //if(b.width <=0 || b.height <=0 || b.x <0 || b.y <0 ) continue;
+            if(!check_box(b, img.rows, img.cols)){
+                continue;
+            }
+            cv::Mat sub = img(Rect(b.x,b.y, b.width, b.height));
+            cv::resize(sub,sub,Size(resize_width, resize_height));
+            //cv::imshow("bk", sub);
+            //cv::waitKey(1);
+ //           int folder_name = 0;
+            if(cnt % number_files ==0){
+                folder_name = cnt / number_files;
+                boost::filesystem::path dir(path+"/"+std::to_string(folder_name));
+	            if(boost::filesystem::create_directory(dir)) {
+		            std::cout << "create " << path << std::to_string(folder_name) <<"\n";
+	            }
+            }
+            string name = path + "/" + std::to_string(folder_name)+"/"+std::to_string(cnt)+".png";
+            //string name = path + "/" + std::to_string(cnt)+".png";
+            ofs << std::to_string(folder_name)+"/"+std::to_string(cnt)+".png "<< std::to_string(map_string2int.size()-1) << std::endl;
+            cv::imwrite(name, sub);
+            ++ cnt;
+            if(cnt % 100 ==0){
+                LOG(INFO)<<"cnt: "<<cnt;
+            }
+        }
+        LOG(INFO)<<"process "<< cnt <<" images";
+
     }
 
-    canny->run(img, proposals);
-    vector<Box> prune;
-    overlap(proposals, annotation, 0.5, prune);
-    label = map_string2int.size() -1; // all negative
-
-    vector<float> conf;
-    for(int j = 0; j < prune.size(); ++ j ){
-        vector<float> confidence;
-        vector<int> label;
-
-        model->run_each(img, confidence, label);
-        conf.push_back(confidence[0]);
-    }
-
-    //vector<>;
-
-      status = ReadMemoryToDatum(img, prune[j], FLAGS_resize_height, FLAGS_resize_width, label, &datum);
-      if (status == false) continue;
-      
-      string key_str = std::to_string(count);
-      string out;
-      CHECK(datum.SerializeToString(&out));
-      txn->Put(key_str, out);
-            //LOG(INFO)<<"read Memory";
-      if(++count % 1000 ==0){
-          txn->Commit();
-          txn.reset(db->NewTransaction());
-          LOG(INFO) << "Processed " << count << " files.";
-      }
-
-
-  }
-  // write the last batch
-  if (count % 1000 != 0) {
-    txn->Commit();
-    LOG(INFO) << "Processed " << count << " files.";
-  }
-#else
-  LOG(FATAL) << "This tool requires OpenCV; compile with USE_OPENCV.";
-#endif  // USE_OPENCV
-  return 0;
+    ofs.close();
 }

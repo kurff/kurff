@@ -76,3 +76,4 @@ target_link_libraries(compare_two_image opencv_core opencv_highgui opencv_imgcod
 add_executable(test_proposal_gen test/test_proposal_gen.cpp proposals/mser/mser.cpp utils/colors.cpp)
 target_link_libraries(test_proposal_gen fast opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc boost_system boost_filesystem  glog gflags)
 
+add_executable(add_path_label test/add_path_label.cpp)

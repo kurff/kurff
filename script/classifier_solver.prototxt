@@ -19,6 +19,6 @@ snapshot: 5000
 test_iter: 100
 # Carry out testing every 500 training iterations.
 test_interval: 500
-snapshot_prefix: "build/"
+snapshot_prefix: "build/hard_model/"
 # solver mode: CPU or GPU
 solver_mode: GPU

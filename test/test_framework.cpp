@@ -67,7 +67,7 @@ int main(int argc, char* argv[]){
         cv::imshow("mser", img);
         cv::waitKey(1);
 
-        cv::imwrite("mser_canny_framework/"+name+".png", img);
+        cv::imwrite("hard_result/"+name+".png", img);
     }
     for(float r = 0.1f; r < 1.0f; r += 0.1){
         LOG(INFO)<<"recall: "<<dataset->evaluate(r);

@@ -1,1 +1,1 @@
-./3rdparty/caffe/distribute/bin/caffe.bin train --solver=./script/classifier_solver.prototxt --weights=./build/_iter_95000.caffemodel
+./3rdparty/caffe/distribute/bin/caffe.bin train --solver=./script/classifier_solver.prototxt --weights=./build/hard_model/_iter_100000.caffemodel

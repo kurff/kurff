@@ -26,17 +26,20 @@ void visualize(Mat& img, const vector<Box>& boxes, Scalar scalar, bool show_text
             for(auto top : box.top_pred_ ){
                 //LOG(INFO)<<"show text";
                 //if(top.name_ != "neg")
-                if(top.predict_ != 62)
-                putText(img, top.name_, cvPoint(box.x-5, box.y-5), FONT_HERSHEY_COMPLEX_SMALL, 1.2, cvScalar(0,0,250), 2, CV_AA);
-                
+                //LOG(INFO)<< top.confidence_;
+                if(top.predict_ != 62 && top.confidence_ > 0.9){
+                    putText(img, top.name_, cvPoint(box.x-5, box.y-5), FONT_HERSHEY_COMPLEX_SMALL, 1.2, cvScalar(0,0,250), 2, CV_AA);
+                    rectangle(img, box, scalar,3);
+                }
+
                 
             }
 
         }
 
-        //if(box.top_pred_[0].predict_ != 62){
-            rectangle(img, box, scalar,3);
-       // }
+        //f(box.top_pred_[0].predict_ != 62 && b){
+           
+        //}
 
 
     }

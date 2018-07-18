@@ -17,7 +17,7 @@ namespace kurff{
                 canny_=ProposalRegistry()->Create("CannyProposal", 200);
                 mser_ = ProposalRegistry()->Create("MSERProposal",100);
                 model_=ModelRegistry()->Create("Classifier",1);
-                model_->init("../script/deploy.prototxt","../build/_iter_10000.caffemodel",1);
+                model_->init("../script/deploy.prototxt","../build/hard_model/_iter_100000.caffemodel",1);
             }
             ~Framework(){
 

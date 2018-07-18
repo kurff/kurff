@@ -121,8 +121,13 @@ int main(int argc, char** argv) {
   for (int i = 0; i < dataset->size(); ++ i) {
     bool status;
     dataset->get(i, img, annotation);
+
+    //
+    
+
+
     for(int j =0; j < annotation.size(); ++ j){
-        for(int k = 0; k < annotation[j].size(); ++ k){
+
             string label_name = annotation[j][k].label_name_[0];
             int label = annotation[j][k].label_[0];
             //LOG(INFO)<<"count: "<<count;
@@ -142,8 +147,6 @@ int main(int argc, char** argv) {
                 txn.reset(db->NewTransaction());
                 LOG(INFO) << "Processed " << count << " files.";
             }
-
-        }
     }
 
     canny->run(img, proposals);

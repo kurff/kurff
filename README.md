@@ -105,3 +105,27 @@ I0709 22:23:39.185767  7614 test_framework.cpp:69] recall: 0.00773088
 
 I0709 22:23:39.555016  7614 test_framework.cpp:69] recall: 0.000835771
 
+
+## train dataset : test framework + classifier + hard example mining
+## canny proposal + mser proposal + classifier + hard example mining
+
+I0719 06:09:19.615123  5983 test_framework.cpp:73] recall: 0.979524
+
+I0719 06:09:27.629153  5983 test_framework.cpp:73] recall: 0.965733
+
+I0719 06:09:35.624987  5983 test_framework.cpp:73] recall: 0.949018
+
+I0719 06:09:43.616525  5983 test_framework.cpp:73] recall: 0.920811
+
+I0719 06:09:51.608841  5983 test_framework.cpp:73] recall: 0.854576
+
+I0719 06:09:59.610008  5983 test_framework.cpp:73] recall: 0.698287
+
+I0719 06:10:07.613169  5983 test_framework.cpp:73] recall: 0.313414
+
+I0719 06:10:15.612305  5983 test_framework.cpp:73] recall: 0.0921438
+
+I0719 06:10:23.605440  5983 test_framework.cpp:73] recall: 0.00961137
+
+
+

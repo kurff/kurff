@@ -123,7 +123,7 @@ int main(int argc, char** argv) {
     dataset->get(i, img, annotation);
 
     //
-    
+
 
 
     for(int j =0; j < annotation.size(); ++ j){

@@ -18,7 +18,7 @@ using namespace std;
 namespace kurff{
 
     // read memory to datum
-    bool ReadMemoryToDatum(cv::Mat& image, Box& box, int resize_height, int resize_width, int label, Datum* datum){
+    bool ReadMemoryToDatum(cv::Mat& image, Box& box, const Box& gt, int resize_height, int resize_width, int label, Datum* datum){
         int height = image.rows;
         int width = image.cols;
 
@@ -38,6 +38,17 @@ namespace kurff{
         cv::waitKey(0);
         CVMatToDatum(img, datum);
         datum->set_label(label);
+        
+        datum->mutable_float_data()->clear();
+
+        float d = sqrt( float(box.width)*float(box.width) + float(box.height)*float(box.height));
+        float dx = (float(gt.x) - float(box.x)) / d;
+        float dy = (float(gt.y) - float(box.y)) / d;
+        
+
+        datum->mutable_float_data()->push_back();
+
+
         
         return flag;
     }

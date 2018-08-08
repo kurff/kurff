@@ -10,7 +10,10 @@ using namespace std;
 namespace kurff{
     class Merge{
         public:
-            Merge(){}
+            Merge(){
+                LOG(INFO)<<"create Merge method";
+
+            }
             ~Merge(){}
             
             void merge(const vector<Box>& proposal1, const vector<Box>& proposal2, 
@@ -48,15 +51,13 @@ namespace kurff{
                     return;
                 }else if(proposal2.size() ==0 && proposal1.size() == 0 ){
                     proposal.clear();
-                    proposal.insert(proposal.end(), proposal_temp.begin(), proposal_temp.end());
                     return;
                 }else{
                     //LOG(INFO)<<"merge";
                     vector<int> index;
-                    overlap(proposal1, proposal2, 0.7, index);
-
+                    overlap(proposal1, proposal2, 0.3, index);
                     for(int i = 0; i < proposal1.size(); ++ i){
-                        if(index[i] != -1){
+                        if(index[i] == -1){
                             proposal_temp.push_back(proposal1[i]);
                         }else{
                             proposal_temp.push_back(proposal1[i]);

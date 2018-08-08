@@ -30,7 +30,7 @@
 #include "utils/visualization.hpp"
 #include "core/common.hpp"
 #include "proposals/Proposal.hpp"
-#include "proposals/CannyProposal.hpp"
+#include "proposals/ProposalGen.hpp"
 #include "convert/dataio.hpp"
 
 
@@ -53,7 +53,7 @@ DEFINE_bool(encoded, false,
 DEFINE_string(encode_type, "",
     "Optional: What type should we encode the image as ('png','jpg',...).");
 
-DEFINE_string(lmdb_name, "icdar2013_sub_classifier", "save name of ");
+DEFINE_string(lmdb_name, "icdar2013_cascade_classifier", "save name of ");
 
 int main(int argc, char** argv) {
 #ifdef USE_OPENCV
@@ -87,8 +87,10 @@ int main(int argc, char** argv) {
     string anno_path="/media/kurff/d45400e1-76eb-453c-a31e-9ae30fafb7fd/data/ICDAR2013/Challenge2_Training_Task2_GT";
     std::shared_ptr<Dataset> dataset = DatasetRegistry()->Create("ICDAR2013Dataset", img_path, anno_path);
     dataset->load("icdar2013.txt");
+    vector<string> proposal_name={"Canny","MSER"};
+    std::shared_ptr<ProposalGen> proposal_method (new ProposalGen(proposal_name));
 
-    std::shared_ptr<Proposal> canny (ProposalRegistry()->Create("CannyProposal",100));
+   // std::shared_ptr<Proposal> canny (ProposalRegistry()->Create("CannyProposal",100));
 
   //boost::is_directory();
 
@@ -116,11 +118,12 @@ int main(int argc, char** argv) {
   int data_size = 0;
   int label = 0;
   bool data_size_initialized = false;
-    cv::Mat img;
-    vector<vector<Box> > annotation;
+  cv::Mat img;
+  vector<vector<Box> > annotation;
   for (int i = 0; i < dataset->size(); ++ i) {
     bool status;
     dataset->get(i, img, annotation);
+
     
     for(int j =0; j < annotation.size(); ++ j){
             string label_name = annotation[j][k].label_name_[0];

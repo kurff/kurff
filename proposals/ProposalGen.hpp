@@ -38,9 +38,12 @@ namespace kurff{
                     proposal_method->run(image, proposals_[cnt]);
                     LOG(INFO)<<proposal_method->name()<<" get proposals: "<<proposals_[cnt].size();
                 }
+                
                 for(int i = 0; i < proposal_methods_.size(); ++ i){
                     merge_->simple_merge(proposals, proposals_[i], proposals);
                 }
+
+                LOG(INFO)<<"final proposal size: "<< proposals.size();
                 
             }
 

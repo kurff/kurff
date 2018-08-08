@@ -4,9 +4,11 @@
 #include <memory>
 #include "proposals/mser/mser.h"
 #include "proposals/Proposal.hpp"
+#include "proposals/Merge.hpp"
 #include "opencv2/opencv.hpp"
 #include "glog/logging.h"
 #include "utils/utils.hpp"
+
 namespace kurff{    
     class MSERProposal: public Proposal{
         public:
@@ -14,6 +16,7 @@ namespace kurff{
                 mser8_.reset(new kurff::MSER(2, 0.0001, 0.1, 0.5, 0.5, true));
                 mser4_.reset(new kurff::MSER(2,0.0001,0.1,0.5,0.5,false));
                 this->name_ = "MSER";
+                merge_.reset(new Merge());
             }
             ~MSERProposal(){
 
@@ -27,9 +30,14 @@ namespace kurff{
                 cv::Mat inverse = 255-gray;
                 mser4_->operator()(inverse.ptr(), gray.cols, gray.rows, region4_);
                 proposals.clear();
-                convert(region8_, proposals, image.rows, image.cols);
+
+                vector<Box> proposal8;
+                convert(region8_, proposal8, image.rows, image.cols);
                 //LOG(INFO)<< proposals[0].x<<" "<< proposals[0].y;
-                convert(region4_, proposals, image.rows, image.cols);
+                vector<Box> proposal4;
+                convert(region4_, proposal4, image.rows, image.cols);
+
+                merge_->simple_merge(proposal8, proposal4, proposals);
                 //LOG(INFO)<<"8: "<< proposals.size();
                 
             }
@@ -75,6 +83,7 @@ namespace kurff{
             std::shared_ptr<kurff::MSER> mser4_;
             std::vector<kurff::MSER::Region> region8_;
             std::vector<kurff::MSER::Region> region4_;
+            std::shared_ptr<Merge> merge_;
 
 
     };

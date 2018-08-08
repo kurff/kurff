@@ -129,7 +129,7 @@ vector<int>& index ){
                 best = cnt;
             }
         }
-        if(o > threshold){
+        if(o < threshold){
             index.push_back(best);
         }else{
             index.push_back(-1);

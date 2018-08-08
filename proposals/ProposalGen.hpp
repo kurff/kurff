@@ -41,6 +41,7 @@ namespace kurff{
                 for(int i = 0; i < proposal_methods_.size(); ++ i){
                     merge_->simple_merge(proposals, proposals_[i], proposals);
                 }
+                
             }
 
             

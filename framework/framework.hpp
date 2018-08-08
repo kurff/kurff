@@ -34,6 +34,8 @@ namespace kurff{
                 model_->run(image, result);
             }
 
+            
+
 
             void run_given_box(const Mat& image, vector<Box>& result){
                 model_->run(image, result);

@@ -124,10 +124,13 @@ int main(int argc, char** argv) {
     bool status;
     dataset->get(i, img, annotation);
 
-    
-    for(int j =0; j < annotation.size(); ++ j){
-            string label_name = annotation[j][k].label_name_[0];
-            int label = annotation[j][k].label_[0];
+    vector<Box> proposals;
+    proposal_method->run(img, proposals);
+
+    for(int j =0; j < proposals.size(); ++ j){
+            //string label_name = annotation[j][k].label_name_[0];
+            //int label = annotation[j][k].label_[0];
+
             //LOG(INFO)<<"count: "<<count;
             status = ReadMemoryToDatum(img, annotation[j][k], FLAGS_resize_height, FLAGS_resize_width, label, &datum);
             if (status == false) continue;

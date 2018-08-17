@@ -123,31 +123,34 @@ int main(int argc, char** argv) {
   for (int i = 0; i < dataset->size(); ++ i) {
     bool status;
     dataset->get(i, img, annotation);
-
     vector<Box> proposals;
     proposal_method->run(img, proposals);
 
-    for(int j =0; j < proposals.size(); ++ j){
-            //string label_name = annotation[j][k].label_name_[0];
-            //int label = annotation[j][k].label_[0];
+    vector<Box> gt;
+    vector<float> ov;
+    overlap_gt(proposals, annotation, gt, ov);
 
-            //LOG(INFO)<<"count: "<<count;
-            status = ReadMemoryToDatum(img, annotation[j][k], FLAGS_resize_height, FLAGS_resize_width, label, &datum);
-            if (status == false) continue;
-            //visualize(img, annotation, Scalar(0,0,255));
-            //cv::imshow("src",img);
-            //cv::waitKey(0);
-            
-            string key_str = std::to_string(count);
-            string out;
-            CHECK(datum.SerializeToString(&out));
-            txn->Put(key_str, out);
-            //LOG(INFO)<<"read Memory";
-            if(++count % 1000 ==0){
-                txn->Commit();
-                txn.reset(db->NewTransaction());
-                LOG(INFO) << "Processed " << count << " files.";
-            }
+   
+    for(int j =0; j < proposals.size(); ++ j){
+        //string label_name = annotation[j][k].label_name_[0];
+        //int label = annotation[j][k].label_[0];
+        //LOG(INFO)<<"count: "<<count;
+        if( ov[j] <= 0.1 ) continue;
+        status = ReadMemoryToDatum(img, proposals[j], gt[j], FLAGS_resize_height, FLAGS_resize_width, label, &datum);
+        if (status == false) continue;
+        visualize(img, proposals[j], Scalar(0,0,255), true);
+        cv::imshow("src",img);
+        cv::waitKey(0);
+        string key_str = std::to_string(count);
+        string out;
+        CHECK(datum.SerializeToString(&out));
+        txn->Put(key_str, out);
+        //LOG(INFO)<<"read Memory";
+        if(++count % 1000 ==0){
+            txn->Commit();
+            txn.reset(db->NewTransaction());
+            LOG(INFO) << "Processed " << count << " files.";
+        }
     }
 
     canny->run(img, proposals);

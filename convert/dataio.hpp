@@ -39,14 +39,14 @@ namespace kurff{
         CVMatToDatum(img, datum);
         datum->set_label(label);
         
-        datum->mutable_float_data()->clear();
+        datum->mutable_float_data()->Clear();
 
         float d = sqrt( float(box.width)*float(box.width) + float(box.height)*float(box.height));
         float dx = (float(gt.x) - float(box.x)) / d;
         float dy = (float(gt.y) - float(box.y)) / d;
         
-
-        datum->mutable_float_data()->push_back();
+        
+        datum->add_float_data(0);
 
 
         

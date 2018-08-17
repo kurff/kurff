@@ -39,6 +39,32 @@ float overlap(const Box& b0, const Box& b1){
     return intersection /(a0+a1-intersection);
 }
 
+
+
+void overlap_gt(const vector<Box>& proposal, const vector<vector<Box> >& annotation, vector<Box>& gt, vector<float>& op ){
+
+    gt.clear();
+    op.clear();
+    for(auto p : proposal){
+        float o = 0.0f;
+        float ov = 0.0f;
+        Box best;
+        for(auto box : annotation){
+            for(auto b : box){
+                ov = overlap(p, b);
+                if(o <= ov ){
+                    o = ov;
+                    best = b;
+                }
+            }
+        }
+        gt.push_back(best);
+        op.push_back(o);
+    }
+}
+
+
+
 void overlap(vector<Box>& proposal, const vector<vector<Box> >& bounding_box, float threshold = 0.5 ){
     LOG(INFO)<<"before size: "<< proposal.size();
     for( auto it = proposal.begin(); it != proposal.end();  ){

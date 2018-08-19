@@ -44,8 +44,10 @@ class Box: public cv::Rect{
             height = box.height;
             width = box.width;
             top_pred_ = box.top_pred_;
-            label_ = box.label_;
-            label_name_ = box.label_name_;
+            label_.clear();
+            label_.insert(label_.end(), box.label_.begin(), box.label_.end());
+            label_name_.clear();
+            label_name_.insert(label_name_.end(), box.label_name_.begin(), box.label_name_.end());
         }
 
         bool check(int rheight, int rwidth){

@@ -18,13 +18,6 @@
 #include "boost/scoped_ptr.hpp"
 #include "gflags/gflags.h"
 #include "glog/logging.h"
-
-#include "caffe/proto/caffe.pb.h"
-#include "caffe/util/db.hpp"
-#include "caffe/util/format.hpp"
-#include "caffe/util/io.hpp"
-#include "caffe/util/rng.hpp"
-
 #include "utils/utils.hpp"
 #include "data/dataset.hpp"
 #include "utils/visualization.hpp"
@@ -33,8 +26,6 @@
 #include "proposals/ProposalGen.hpp"
 #include "convert/dataio.hpp"
 
-
-using namespace caffe;  // NOLINT(build/namespaces)
 using namespace kurff;
 using std::pair;
 using boost::scoped_ptr;
@@ -48,12 +39,6 @@ DEFINE_int32(resize_width, 64, "Width images are resized to");
 DEFINE_int32(resize_height, 64, "Height images are resized to");
 DEFINE_bool(check_size, false,
     "When this option is on, check that all the datum have the same size");
-DEFINE_bool(encoded, false,
-    "When this option is on, the encoded image will be save in datum");
-DEFINE_string(encode_type, "",
-    "Optional: What type should we encode the image as ('png','jpg',...).");
-
-DEFINE_string(lmdb_name, "icdar2013_cascade_classifier", "save name of ");
 
 int main(int argc, char** argv) {
 #ifdef USE_OPENCV
@@ -79,9 +64,7 @@ int main(int argc, char** argv) {
   }
 
   const bool is_color = !FLAGS_gray;
-  const bool check_size = FLAGS_check_size;
-  const bool encoded = FLAGS_encoded;
-  const string encode_type = FLAGS_encode_type;
+
 
     string img_path="/media/kurff/d45400e1-76eb-453c-a31e-9ae30fafb7fd/data/ICDAR2013/Challenge2_Training_Task12_Images";
     string anno_path="/media/kurff/d45400e1-76eb-453c-a31e-9ae30fafb7fd/data/ICDAR2013/Challenge2_Training_Task2_GT";
@@ -94,32 +77,19 @@ int main(int argc, char** argv) {
 
   //boost::is_directory();
 
-  if (encode_type.size() && !encoded)
-    LOG(INFO) << "encode_type specified, assuming encoded=true.";
+
 
   int resize_height = std::max<int>(0, FLAGS_resize_height);
   int resize_width = std::max<int>(0, FLAGS_resize_width);
 
-  // Create new DB
-  boost::filesystem::path path(FLAGS_lmdb_name);
-  if(boost::filesystem::is_directory(path)){
-      boost::filesystem::remove_all(path);
-  }
-
   vector<Box> proposals;
-
-  scoped_ptr<db::DB> db(db::GetDB(FLAGS_backend));
-  db->Open(FLAGS_lmdb_name, db::NEW);
-  scoped_ptr<db::Transaction> txn(db->NewTransaction());
-
-  // Storing to db
-  Datum datum;
   int count = 0;
   int data_size = 0;
   int label = 0;
   bool data_size_initialized = false;
   cv::Mat img;
   vector<vector<Box> > annotation;
+ ofstream fo("diff.txt", ios::out);
   for (int i = 0; i < dataset->size(); ++ i) {
     bool status;
     dataset->get(i, img, annotation);
@@ -140,34 +110,14 @@ int main(int argc, char** argv) {
           label = gt[j].label_[0];
         }
 
-
-        status = ReadMemoryToDatum(img, proposals[j], gt[j], ov[j], FLAGS_resize_height, FLAGS_resize_width, label, &datum);
-        if (status == false) continue;
-        // if(label ==0){
-        //   visualize(img, proposals[j], Scalar(0,0,255), true);
-        //   visualize(img, gt[j], Scalar(255,0,0), true);
-        //   cv::imshow("images",img);
-        //   cv::waitKey(0);
-        // }
-
-        string key_str = std::to_string(count);
-        string out;
-        CHECK(datum.SerializeToString(&out));
-        txn->Put(key_str, out);
-        //LOG(INFO)<<"read Memory";
-        if(++count % 1000 ==0){
-            txn->Commit();
-            txn.reset(db->NewTransaction());
-            LOG(INFO) << "Processed " << count << " files.";
-        }
+       
+        float dx = 0.0f, dy = 0.0f, dw = 0.0f, dh = 0.0f;
+        diff(proposals[j],gt[j],dx, dy, dw ,dh);
+        fo<< label<<" "<< dx <<" "<<dy<<" "<< dw<<" "<< dh << std::endl;
     }
 
   }
-  // write the last batch
-  if (count % 1000 != 0) {
-    txn->Commit();
-    LOG(INFO) << "Processed " << count << " files.";
-  }
+  fo.close();
 #else
   LOG(FATAL) << "This tool requires OpenCV; compile with USE_OPENCV.";
 #endif  // USE_OPENCV

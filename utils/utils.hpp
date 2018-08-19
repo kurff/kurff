@@ -41,15 +41,14 @@ float overlap(const Box& b0, const Box& b1){
 
 
 
-void overlap_gt(const vector<Box>& proposal, const vector<vector<Box> >& annotation, vector<Box>& gt, vector<float>& op ){
-
+void overlap_gt(const vector<Box>& proposal, const vector<vector<Box> >& annotation, vector<Box>& gt, vector<float>& op){
     gt.clear();
     op.clear();
     for(auto p : proposal){
         float o = 0.0f;
         float ov = 0.0f;
         Box best;
-        for(auto box : annotation){
+        for(auto box: annotation){
             for(auto b : box){
                 ov = overlap(p, b);
                 if(o <= ov ){

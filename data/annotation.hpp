@@ -50,6 +50,7 @@ namespace kurff{
                     LOG(INFO) <<"can not open anotation file"<< file_name;
                     return;
                 }
+                LOG(INFO)<<"read annotation file: "<< file_name;
 
                 string text_content;
                 boxes_all.clear();
@@ -60,6 +61,7 @@ namespace kurff{
                     vector<string> names;
                     SplitString(text_content, names, " ");
                     box.label_name_.clear();
+                    box.label_.clear();
                     if(names[0][0]=='#'){
                         //LOG(INFO)<<"error";
                         LOG(INFO)<<text_content;
@@ -87,11 +89,17 @@ namespace kurff{
 
                         box.label_name_.push_back (names[9].substr(1,1));
                         auto it = map_string2int.find(box.label_name_[0]);
+
                         if(it != map_string2int.end()){
                             box.label_.push_back(it->second);
                         }else{
                             box.label_.push_back(map_string2int.size()-1);
                         }
+                        //LOG(INFO)<<"label size: "<< box.label_.size();
+
+                        //for(auto b : box.label_){
+                        //    LOG(INFO)<<"label b "<< b;
+                        //}
                         
                         //LOG(INFO)<<names[9] <<" "<< text_content;
                         //LOG(INFO)<< box.label_name_[0];

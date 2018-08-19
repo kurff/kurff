@@ -52,9 +52,11 @@ target_link_libraries(test_framework caffe boost_system boost_filesystem opencv_
 add_executable(convert_classifier convert/convert_classifier.cpp)
 target_link_libraries(convert_classifier opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc  glog gflags)
 
-add_executable(convert_cascade convert/convert_cascade.cpp)
-target_link_libraries(convert_cascade opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc boost_system boost_filesystem glog gflags)
+add_executable(convert_cascade convert/convert_cascade.cpp proposals/mser/mser.cpp)
+target_link_libraries(convert_cascade caffe fast opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc boost_system boost_filesystem glog gflags)
 
+add_executable(diff convert/diff_distribution.cpp proposals/mser/mser.cpp)
+target_link_libraries(diff caffe fast opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc boost_system boost_filesystem glog gflags)
 
 
 add_executable(convert_icdar2013 convert/convert_icdar2013.cpp)
